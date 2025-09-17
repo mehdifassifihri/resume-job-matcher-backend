@@ -1,0 +1,63 @@
+JOHN SMITH
+Software Engineer
+Email: john.smith@email.com | Phone: (555) 123-4567
+LinkedIn: linkedin.com/in/johnsmith | GitHub: github.com/johnsmith
+
+PROFESSIONAL SUMMARY
+Experienced software engineer with 5+ years of experience in full-stack development, specializing in Python, JavaScript, and cloud technologies. Proven track record of delivering scalable web applications and leading development teams.
+
+TECHNICAL SKILLS
+Programming Languages: Python, JavaScript, TypeScript, Java, SQL
+Frameworks & Libraries: React, Node.js, Django, Flask, Spring Boot
+Databases: PostgreSQL, MongoDB, Redis, MySQL
+Cloud & DevOps: AWS, Docker, Kubernetes, Jenkins, Terraform
+Tools: Git, Jira, Confluence, VS Code, IntelliJ IDEA
+
+PROFESSIONAL EXPERIENCE
+
+Senior Software Engineer | TechCorp Inc. | 2021 - Present
+• Led development of microservices architecture serving 1M+ users
+• Implemented CI/CD pipelines reducing deployment time by 60%
+• Mentored 3 junior developers and conducted code reviews
+• Built RESTful APIs using Python/Django and Node.js/Express
+• Optimized database queries improving application performance by 40%
+
+Software Engineer | StartupXYZ | 2019 - 2021
+• Developed full-stack web applications using React and Python
+• Collaborated with cross-functional teams in Agile environment
+• Implemented automated testing increasing code coverage to 85%
+• Designed and developed REST APIs with comprehensive documentation
+• Participated in sprint planning and daily standups
+
+Junior Developer | WebSolutions Ltd. | 2018 - 2019
+• Built responsive web applications using HTML, CSS, and JavaScript
+• Worked with MySQL databases and PHP backend development
+• Assisted in debugging and maintaining legacy applications
+• Gained experience in version control with Git and GitHub
+
+EDUCATION
+Bachelor of Science in Computer Science
+University of Technology | 2014 - 2018
+GPA: 3.7/4.0
+
+CERTIFICATIONS
+• AWS Certified Solutions Architect - Associate (2022)
+• Certified Kubernetes Administrator (2021)
+• Google Cloud Professional Developer (2020)
+
+PROJECTS
+E-commerce Platform
+• Built scalable e-commerce platform using React, Node.js, and MongoDB
+• Implemented payment processing with Stripe API
+• Deployed on AWS with Docker containerization
+
+Task Management App
+• Developed collaborative task management application
+• Features include real-time updates, file sharing, and team collaboration
+• Technologies: React, Python/Django, PostgreSQL, WebSocket
+
+ACHIEVEMENTS
+• Reduced application response time by 50% through performance optimization
+• Successfully migrated legacy system to cloud infrastructure
+• Led team of 5 developers in delivering critical project on time
+• Contributed to open-source projects with 500+ GitHub stars
