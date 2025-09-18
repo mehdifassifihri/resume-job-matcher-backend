@@ -54,42 +54,36 @@ A powerful AI-powered resume and job matching system that analyzes resumes again
 
 3. **Install dependencies**
    ```bash
-   pip install -r requirements.txt
+   pip install -r assets/requirements.txt
    ```
 
 4. **Set up environment variables**
    ```bash
-   cp .env.example .env
-   # Edit .env and add your OpenAI API key
+   # Create .env file and add your OpenAI API key
+   echo "OPENAI_API_KEY=your-openai-api-key-here" > .env
+   echo "DEFAULT_MODEL=gpt-4o-mini" >> .env
    ```
 
 5. **Run the application**
    ```bash
-   python main.py
+   python src/main.py
    ```
 
 The API will be available at `http://localhost:8000`
 
-### Docker Installation
-
-```bash
-# Build the Docker image
-docker build -t resume-matcher .
-
-# Run the container
-docker run -p 8000:8000 -e OPENAI_API_KEY=your-api-key resume-matcher
-```
 
 ## 🔧 Configuration
 
 ### Environment Variables
 
-Create a `.env` file in the root directory:
+The application uses the following environment variables:
 
 ```env
 OPENAI_API_KEY=your-openai-api-key-here
 DEFAULT_MODEL=gpt-4o-mini
 ```
+
+You can set these as environment variables or create a `.env` file in the root directory.
 
 ### Supported Models
 - `gpt-4o-mini` (default, cost-effective)

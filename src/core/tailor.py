@@ -6,7 +6,7 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.output_parsers import PydanticOutputParser
 from langchain_openai import ChatOpenAI
 
-from models import JDStruct, CVStruct, TailoredOutput, TailoredResumeStruct
+from .models import JDStruct, CVStruct, TailoredOutput, TailoredResumeStruct
 
 
 # Tailored Resume Parser

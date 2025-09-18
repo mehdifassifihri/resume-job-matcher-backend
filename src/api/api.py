@@ -12,10 +12,10 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 import traceback
 
-from models import MatchRequest, SuperOutput, ATSValidationResult
-from config import OPENAI_API_KEY
-from pipeline import run_pipeline
-from ats_validator import validate_ats_compliance, optimize_resume_for_ats
+from core.models import MatchRequest, SuperOutput, ATSValidationResult
+from core.config import OPENAI_API_KEY
+from core.pipeline import run_pipeline
+from validators.ats_validator import validate_ats_compliance, optimize_resume_for_ats
 
 # Configure logging
 logging.basicConfig(
