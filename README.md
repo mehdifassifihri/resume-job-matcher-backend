@@ -71,6 +71,35 @@ A powerful AI-powered resume and job matching system that analyzes resumes again
 
 The API will be available at `http://localhost:8000`
 
+## 🚀 Deployment
+
+### Render (Recommended)
+
+1. **Fork this repository** to your GitHub account
+
+2. **Create a Render account** at [render.com](https://render.com)
+
+3. **Create a new Web Service**:
+   - Connect your GitHub repository
+   - Choose "Web Service"
+   - Use the following settings:
+     - **Build Command**: `pip install -r requirements.txt`
+     - **Start Command**: `python src/main.py`
+     - **Environment**: `Python 3`
+     - **Plan**: Free
+
+4. **Set Environment Variables** in Render dashboard:
+   - `OPENAI_API_KEY`: Your OpenAI API key
+   - `DEFAULT_MODEL`: `gpt-4o-mini`
+   - `PORT`: `10000`
+
+5. **Deploy**: Render will automatically deploy your app
+
+Your API will be available at `https://your-app-name.onrender.com`
+
+### Railway (Alternative)
+
+Railway has timeout limitations for long-running requests. For APIs that take 1-2 minutes to process, consider using Render instead.
 
 ## 🔧 Configuration
 
