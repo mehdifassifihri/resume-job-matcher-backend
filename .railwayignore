@@ -1,15 +1,90 @@
-# Ignore problematic files and directories
-src/main.py.backup
-src/__pycache__/
-src/*/__pycache__/
-*.pyc
-*.pyo
-*.pyd
+# Python cache files
 __pycache__/
-.pytest_cache/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
 .coverage
-.venv/
-venv/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Environments
 .env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+*.db
+*.sqlite
+*.sqlite3
+test_*.txt
+examples/
+docs/
+tests/
+
+# Git
+.git/
+.gitignore
+
+# Logs
 *.log
-resume_matcher.db
+logs/
+
+# Temporary files
+*.tmp
+*.temp

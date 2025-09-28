@@ -20,11 +20,6 @@ REFRESH_TOKEN_EXPIRE_DAYS = 7
 # Database Configuration
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./resume_matcher.db")
 
-# Railway-specific database configuration
-if os.getenv("RAILWAY_ENVIRONMENT"):
-    # Use SQLite for testing on Railway (data will be temporary)
-    DATABASE_URL = "sqlite:///./temp_resume_matcher.db"
-
 # Validation
 if not OPENAI_API_KEY:
     print("⚠️  WARNING: OPENAI_API_KEY environment variable is not set!")

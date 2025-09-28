@@ -16,14 +16,13 @@ from ..core.models import MatchRequest, SuperOutput, ATSValidationResult
 from ..core.config import OPENAI_API_KEY
 from ..core.pipeline import run_pipeline
 from ..validators.ats_validator import validate_ats_compliance, optimize_resume_for_ats
-# Temporarily disable auth for testing
-# from ..auth.routes import router as auth_router
-# from ..auth.history_routes import router as history_router
-# from ..auth.dependencies import get_current_active_user
-# from ..auth.init_db import create_tables
-# from ..auth.models import User, AnalysisHistory
-# from sqlalchemy.orm import Session
-# from ..auth.database import get_db
+from ..auth.routes import router as auth_router
+from ..auth.history_routes import router as history_router
+from ..auth.dependencies import get_current_active_user
+from ..auth.init_db import create_tables
+from ..auth.models import User, AnalysisHistory
+from sqlalchemy.orm import Session
+from ..auth.database import get_db
 
 # Configure logging
 logging.basicConfig(
@@ -42,12 +41,12 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Temporarily disable auth routes for testing
-# app.include_router(auth_router)
-# app.include_router(history_router)
+# Include authentication and history routes
+app.include_router(auth_router)
+app.include_router(history_router)
 
-# Temporarily disable database initialization for testing
-# create_tables()
+# Initialize database tables
+create_tables()
 
 app.add_middleware(
     CORSMiddleware,
@@ -224,9 +223,8 @@ async def match_upload(
 @app.post("/ats/validate", response_model=ATSValidationResult)
 async def validate_ats(
     resume_text: str = Form(..., description="Resume text to validate"),
-    job_keywords: str = Form(default="", description="Comma-separated job keywords")
-    # Temporarily disable auth for testing
-    # current_user: User = Depends(get_current_active_user)
+    job_keywords: str = Form(default="", description="Comma-separated job keywords"),
+    current_user: User = Depends(get_current_active_user)
 ):
     """Validate resume for ATS compatibility."""
     logger.info("ATS validation request received")
@@ -271,9 +269,8 @@ async def validate_ats(
 @app.post("/ats/optimize")
 async def optimize_ats(
     resume_text: str = Form(..., description="Resume text to optimize"),
-    job_keywords: str = Form(..., description="Comma-separated job keywords")
-    # Temporarily disable auth for testing
-    # current_user: User = Depends(get_current_active_user)
+    job_keywords: str = Form(..., description="Comma-separated job keywords"),
+    current_user: User = Depends(get_current_active_user)
 ):
     """Optimize resume for ATS compatibility."""
     logger.info("ATS optimization request received")
