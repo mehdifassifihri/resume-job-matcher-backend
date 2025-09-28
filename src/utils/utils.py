@@ -7,7 +7,7 @@ from pypdf import PdfReader
 from docx import Document as DocxDocument
 from langdetect import detect
 
-from core.config import (
+from ..core.config import (
     BULLET_PATTERN, MULTISPACE, MULTINEWLINE, DASHES, DATE_RANGE,
     ALIASES, SKILL_VARIANTS, EDUCATION_VARIANTS
 )

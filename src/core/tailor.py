@@ -12,72 +12,45 @@ from .models import JDStruct, CVStruct, TailoredOutput, TailoredResumeStruct
 # Tailored Resume Parser
 Tail_parser = PydanticOutputParser(pydantic_object=TailoredOutput)
 Tail_prompt = ChatPromptTemplate.from_template("""
-You rewrite the resume strictly using only facts from the original resume, tailored to the job description and optimized for ATS (Applicant Tracking Systems). Return ONLY valid JSON with both structured data and formatted text.
+You are a professional resume tailor. Create a tailored resume using ONLY facts from the original resume, optimized for the job description. Return ONLY valid JSON according to the schema.
 
 Original resume:
 ---
 {resume_text}
 ---
 
-Job (structured):
+Job requirements:
 ---
 {jd_struct}
 ---
 
-Candidate (structured):
+Candidate profile:
 ---
 {cv_struct}
 ---
 
-Score and gaps:
----
-score={score}
-coverage={coverage}
-gaps={gaps}
----
+Match analysis:
+- Score: {score}
+- Coverage: {coverage}
+- Gaps: {gaps}
 
 Schema:
 {format_instructions}
 
-CRITICAL RULES FOR STRUCTURED OUTPUT:
-- structured_resume: Provide detailed structured data for dynamic frontend rendering
-- tailored_resume_text: Provide full formatted resume text for fallback/ATS compatibility
-- Keep ONLY factual content present in original resume
-- Prioritize JD keywords naturally throughout all sections
+INSTRUCTIONS:
+1. PRESERVE ALL SECTIONS: Include every section from the original resume in both structured_resume and tailored_resume_text
+2. STRUCTURED RESUME: Fill all available fields with data from original resume
+3. TAILORED TEXT: Create formatted resume text with all original sections
+4. KEYWORDS: Naturally incorporate job description keywords
+5. FORMAT: Use clear section headers, bullet points, professional language
+6. RECOMMENDATIONS: Suggest 3-5 actionable improvements
 
-STRUCTURED RESUME REQUIREMENTS:
-- contact_info: Extract name, email, phone, location, linkedin from original resume
-- summary: Create 2-3 sentence professional summary highlighting relevant experience for this job
-- experience: List work experience with company, title, start_date, end_date, achievements (array of strings)
-- education: List education with degree, institution, start_date, end_date
-- skills: Organize into categories: technical (programming languages, frameworks, tools), soft (leadership, communication), languages (spoken languages). CRITICAL: Add ALL missing skills from job description to the skills section while avoiding duplicates with existing skills. This is mandatory - missing job skills must appear in the structured_resume skills field.
-- certifications: List with name, issuer, date
-- projects: Include relevant projects with name, description, technologies_used, achievements
-- achievements: Key accomplishments and metrics
+SECTIONS TO INCLUDE:
+- contact_info, summary, experience, education, skills, certifications, projects, achievements
+- awards, publications, volunteer_work, interests, references, languages (if present in original)
+- additional_sections for any other content from original resume
 
-FORMATTED TEXT REQUIREMENTS:
-- Use standard section headers: "EXPERIENCE", "EDUCATION", "SKILLS", "SUMMARY"
-- Reorder experience with most relevant first
-- Use simple formatting: standard bullets (- or •), no tables, no images
-- Bullets ≤ 2 lines, start with strong action verbs, quantify with numbers
-- Include contact information clearly at the top
-- Total length target: 1–2 pages (400-800 words)
-- Use consistent date formats (MM/YYYY or Month YYYY)
-- Avoid first person pronouns ("I", "me", "my")
-- Use industry-standard terminology and job titles
-
-CONTENT OPTIMIZATION:
-- Start bullet points with action verbs: "Developed", "Implemented", "Managed", "Led", "Improved", "Created"
-- Include specific metrics and quantifiable results where possible
-- Highlight technical skills and tools mentioned in the job description
-- Emphasize relevant achievements and responsibilities
-- Use keywords from the job description naturally in context
-
-RECOMMENDATIONS:
-- Provide 3–5 short, actionable items that DO NOT suggest education already present in the resume
-- DO NOT recommend obtaining degrees or certifications that are already mentioned in the candidate's education
-- Focus recommendations on skills, experience, or certifications that are actually missing and relevant to the job
-- Include specific, measurable suggestions for skill development or experience gaps
+Return ONLY the JSON object, no additional text.
 """).partial(format_instructions=Tail_parser.get_format_instructions())
 
 

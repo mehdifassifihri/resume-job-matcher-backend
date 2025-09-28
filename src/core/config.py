@@ -11,6 +11,20 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 DEFAULT_MODEL = "gpt-4o-mini"
 
+# JWT Configuration
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-this-in-production")
+JWT_ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+REFRESH_TOKEN_EXPIRE_DAYS = 7
+
+# Database Configuration
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./resume_matcher.db")
+
+# Railway-specific database configuration
+if os.getenv("RAILWAY_ENVIRONMENT"):
+    # Use SQLite for testing on Railway (data will be temporary)
+    DATABASE_URL = "sqlite:///./temp_resume_matcher.db"
+
 # Validation
 if not OPENAI_API_KEY:
     print("⚠️  WARNING: OPENAI_API_KEY environment variable is not set!")

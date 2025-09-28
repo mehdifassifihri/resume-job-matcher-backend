@@ -23,11 +23,34 @@ A powerful AI-powered resume and job matching system that analyzes resumes again
 - **Multi-language Support**: Automatic language detection and processing
 - **RESTful API**: Clean, well-documented API endpoints for easy integration
 
+### Authentication & User Management
+- **JWT Authentication**: Secure token-based authentication system
+- **User Registration & Login**: Complete user management with secure password hashing
+- **Analysis History**: Track and retrieve all CV analysis history per user
+- **Payment History**: Manage and track payment records for premium features
+- **Protected Endpoints**: All analysis endpoints require authentication
+
 ### API Endpoints
+
+#### Authentication (Public)
+- `POST /auth/register` - Register a new user
+- `POST /auth/login` - Login and get JWT tokens
+- `POST /auth/refresh` - Refresh access token
+- `GET /auth/me` - Get current user information
+
+#### Analysis (Protected - Requires JWT)
 - `POST /match/run` - Process text-based resume and job description matching
 - `POST /match/upload` - Handle file uploads for resume and job description processing
 - `POST /ats/validate` - Validate resume for ATS compatibility
 - `POST /ats/optimize` - Optimize resume for ATS systems
+
+#### History (Protected - Requires JWT)
+- `GET /history/analyses` - Get user's analysis history
+- `GET /history/analyses/{id}` - Get specific analysis details
+- `GET /history/payments` - Get user's payment history
+- `GET /history/payments/{id}` - Get specific payment details
+
+#### System
 - `GET /health` - Health check endpoint
 
 ## 📋 Requirements
@@ -35,6 +58,41 @@ A powerful AI-powered resume and job matching system that analyzes resumes again
 - Python 3.8 or higher
 - OpenAI API key
 - Internet connection for AI processing
+
+## 🔧 Setup
+
+1. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Set environment variables:**
+   Create a `.env` file with:
+   ```env
+   OPENAI_API_KEY=your-openai-api-key-here
+   JWT_SECRET_KEY=your-super-secret-jwt-key-change-this-in-production
+   DATABASE_URL=sqlite:///./resume_matcher.db
+   ```
+
+3. **Run the application:**
+   ```bash
+   python src/main.py
+   ```
+
+4. **Test authentication:**
+   ```bash
+   python test_auth.py
+   ```
+
+## 🔐 Authentication
+
+The API now uses JWT (JSON Web Tokens) for authentication. All analysis endpoints require a valid JWT token in the Authorization header:
+
+```http
+Authorization: Bearer <your-jwt-token>
+```
+
+See [AUTHENTICATION.md](AUTHENTICATION.md) for detailed authentication setup and usage instructions.
 
 ## 🛠️ Installation
 
@@ -71,35 +129,6 @@ A powerful AI-powered resume and job matching system that analyzes resumes again
 
 The API will be available at `http://localhost:8000`
 
-## 🚀 Deployment
-
-### Render (Recommended)
-
-1. **Fork this repository** to your GitHub account
-
-2. **Create a Render account** at [render.com](https://render.com)
-
-3. **Create a new Web Service**:
-   - Connect your GitHub repository
-   - Choose "Web Service"
-   - Use the following settings:
-     - **Build Command**: `pip install -r requirements.txt`
-     - **Start Command**: `python src/main.py`
-     - **Environment**: `Python 3`
-     - **Plan**: Free
-
-4. **Set Environment Variables** in Render dashboard:
-   - `OPENAI_API_KEY`: Your OpenAI API key
-   - `DEFAULT_MODEL`: `gpt-4o-mini`
-   - `PORT`: `10000`
-
-5. **Deploy**: Render will automatically deploy your app
-
-Your API will be available at `https://your-app-name.onrender.com`
-
-### Railway (Alternative)
-
-Railway has timeout limitations for long-running requests. For APIs that take 1-2 minutes to process, consider using Render instead.
 
 ## 🔧 Configuration
 

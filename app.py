@@ -1,29 +1,25 @@
 """
-FastAPI routes and endpoints for the resume-job matcher.
+Simplified entry point for Railway deployment (testing version).
 """
 import os
+import sys
 import tempfile
 import shutil
 import logging
 from typing import Optional
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request, Depends
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 import traceback
 
-from ..core.models import MatchRequest, SuperOutput, ATSValidationResult
-from ..core.config import OPENAI_API_KEY
-from ..core.pipeline import run_pipeline
-from ..validators.ats_validator import validate_ats_compliance, optimize_resume_for_ats
-# Temporarily disable auth for testing
-# from ..auth.routes import router as auth_router
-# from ..auth.history_routes import router as history_router
-# from ..auth.dependencies import get_current_active_user
-# from ..auth.init_db import create_tables
-# from ..auth.models import User, AnalysisHistory
-# from sqlalchemy.orm import Session
-# from ..auth.database import get_db
+# Add src to path
+sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+
+from src.core.models import MatchRequest, SuperOutput, ATSValidationResult
+from src.core.config import OPENAI_API_KEY
+from src.core.pipeline import run_pipeline
+from src.validators.ats_validator import validate_ats_compliance, optimize_resume_for_ats
 
 # Configure logging
 logging.basicConfig(
@@ -32,22 +28,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 # Initialize FastAPI app
 app = FastAPI(
-    title="AI Resume & Job Matcher — Ultra-Light API",
-    description="AI-powered resume and job matching system with ATS validation and JWT authentication",
-    version="1.0.0",
+    title="AI Resume & Job Matcher — Test Version",
+    description="AI-powered resume and job matching system (simplified for testing)",
+    version="1.0.0-test",
     docs_url="/docs",
     redoc_url="/redoc"
 )
-
-# Temporarily disable auth routes for testing
-# app.include_router(auth_router)
-# app.include_router(history_router)
-
-# Temporarily disable database initialization for testing
-# create_tables()
 
 app.add_middleware(
     CORSMiddleware,
@@ -73,7 +61,6 @@ async def general_exception_handler(request: Request, exc: Exception):
         content={"detail": "Internal server error. Please try again later."}
     )
 
-
 @app.get("/health")
 def health():
     """Health check endpoint."""
@@ -81,10 +68,10 @@ def health():
     return {
         "ok": True,
         "status": "healthy",
-        "version": "1.0.0",
-        "openai_configured": bool(OPENAI_API_KEY)
+        "version": "1.0.0-test",
+        "openai_configured": bool(OPENAI_API_KEY),
+        "mode": "testing"
     }
-
 
 @app.post("/match/run", response_model=SuperOutput)
 def match_run(req: MatchRequest):
@@ -132,7 +119,6 @@ def match_run(req: MatchRequest):
     except Exception as e:
         logger.error(f"Error in match_run: {str(e)}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
-
 
 @app.post("/match/upload", response_model=SuperOutput)
 async def match_upload(
@@ -220,13 +206,10 @@ async def match_upload(
             except Exception as e:
                 logger.warning(f"Failed to delete job temp file: {e}")
 
-
 @app.post("/ats/validate", response_model=ATSValidationResult)
 async def validate_ats(
     resume_text: str = Form(..., description="Resume text to validate"),
     job_keywords: str = Form(default="", description="Comma-separated job keywords")
-    # Temporarily disable auth for testing
-    # current_user: User = Depends(get_current_active_user)
 ):
     """Validate resume for ATS compatibility."""
     logger.info("ATS validation request received")
@@ -267,13 +250,10 @@ async def validate_ats(
         logger.error(f"Error in validate_ats: {str(e)}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"Error validating ATS compliance: {str(e)}")
 
-
 @app.post("/ats/optimize")
 async def optimize_ats(
     resume_text: str = Form(..., description="Resume text to optimize"),
     job_keywords: str = Form(..., description="Comma-separated job keywords")
-    # Temporarily disable auth for testing
-    # current_user: User = Depends(get_current_active_user)
 ):
     """Optimize resume for ATS compatibility."""
     logger.info("ATS optimization request received")
@@ -322,3 +302,7 @@ async def optimize_ats(
         logger.error(f"Error in optimize_ats: {str(e)}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"Error optimizing for ATS: {str(e)}")
 
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)

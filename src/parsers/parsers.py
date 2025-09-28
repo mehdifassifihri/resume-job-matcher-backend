@@ -6,9 +6,9 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.output_parsers import PydanticOutputParser
 from langchain_openai import ChatOpenAI
 
-from core.models import JDStruct, CVStruct
-from core.config import ALIASES
-from utils.utils import normalize_list, norm_one
+from ..core.models import JDStruct, CVStruct
+from ..core.config import ALIASES
+from ..utils.utils import normalize_list, norm_one
 
 
 # Job Description Parser

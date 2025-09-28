@@ -3,7 +3,7 @@ Matching and scoring logic for resume-job compatibility.
 """
 from typing import Tuple, Dict, List
 from .models import JDStruct, CVStruct, Coverage
-from utils.utils import contains_skill
+from ..utils.utils import contains_skill
 
 
 def seniority_fit_score(jd_seniority: str, years: float) -> float:

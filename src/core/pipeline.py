@@ -3,11 +3,11 @@ Main pipeline orchestrating the resume-job matching process.
 """
 from typing import Optional
 from .models import SuperOutput, EnhancedSuperOutput, ATSValidationResult
-from utils.utils import normalize_inputs, validate_education_extraction, safety_scan
-from parsers.parsers import parse_jd, parse_cv
+from ..utils.utils import normalize_inputs, validate_education_extraction, safety_scan
+from ..parsers.parsers import parse_jd, parse_cv
 from .matcher import match_and_score
 from .tailor import tailor_resume
-from validators.ats_validator import validate_ats_compliance
+from ..validators.ats_validator import validate_ats_compliance
 
 
 def run_pipeline(
