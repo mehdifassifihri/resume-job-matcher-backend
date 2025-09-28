@@ -64,14 +64,23 @@ async def general_exception_handler(request: Request, exc: Exception):
 @app.get("/health")
 def health():
     """Health check endpoint."""
-    logger.info("Health check requested")
-    return {
-        "ok": True,
-        "status": "healthy",
-        "version": "1.0.0-test",
-        "openai_configured": bool(OPENAI_API_KEY),
-        "mode": "testing"
-    }
+    try:
+        logger.info("Health check requested")
+        return {
+            "ok": True,
+            "status": "healthy",
+            "version": "1.0.0-test",
+            "openai_configured": bool(OPENAI_API_KEY),
+            "mode": "testing"
+        }
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        return {
+            "ok": False,
+            "status": "error",
+            "error": str(e),
+            "version": "1.0.0-test"
+        }
 
 @app.post("/match/run", response_model=SuperOutput)
 def match_run(req: MatchRequest):
