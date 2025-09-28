@@ -5,7 +5,7 @@ Minimal dependencies to avoid import issues.
 import os
 import sys
 import logging
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
@@ -125,6 +125,211 @@ def match_simple(request: dict):
         raise
     except Exception as e:
         logger.error(f"Error in simple match: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@app.post("/match/run")
+def match_run(request: dict):
+    """Full matching endpoint (placeholder for AI processing)."""
+    try:
+        # Validate input
+        if not request.get("resume_text") and not request.get("resume_file_path"):
+            raise HTTPException(
+                status_code=400,
+                detail="Either resume_text or resume_file_path must be provided"
+            )
+        
+        if not request.get("job_text") and not request.get("job_file_path"):
+            raise HTTPException(
+                status_code=400,
+                detail="Either job_text or job_file_path must be provided"
+            )
+        
+        # Check OpenAI API key
+        openai_key = os.getenv("OPENAI_API_KEY")
+        if not openai_key:
+            raise HTTPException(
+                status_code=500,
+                detail="OpenAI API key not configured. Please set OPENAI_API_KEY environment variable."
+            )
+        
+        # Placeholder response (AI processing would go here)
+        return {
+            "score": 85.5,
+            "match_percentage": 85.5,
+            "resume_summary": "Développeur Python expérimenté",
+            "job_summary": "Recherche développeur Python senior",
+            "matched_skills": ["Python", "Développement", "Web"],
+            "missing_skills": ["Docker", "Kubernetes"],
+            "recommendations": [
+                "Ajoutez des compétences en conteneurisation",
+                "Mettez en avant vos projets Python"
+            ],
+            "note": "This is a placeholder response. AI processing would be implemented here with OpenAI API."
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in match_run: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@app.post("/match/upload")
+async def match_upload(
+    resume_file: UploadFile = File(..., description="Resume file (PDF, DOCX, or TXT)"),
+    job_file: UploadFile = File(..., description="Job description file (PDF, DOCX, or TXT)"),
+    model: str = Form(default="gpt-4o-mini", description="OpenAI model to use")
+):
+    """Upload files for matching (placeholder)."""
+    try:
+        # Validate file types
+        allowed_extensions = {'.pdf', '.docx', '.txt'}
+        resume_ext = os.path.splitext(resume_file.filename)[1].lower()
+        job_ext = os.path.splitext(job_file.filename)[1].lower()
+        
+        if resume_ext not in allowed_extensions:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unsupported resume file type: {resume_ext}. Supported types: PDF, DOCX, TXT"
+            )
+        
+        if job_ext not in allowed_extensions:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unsupported job file type: {job_ext}. Supported types: PDF, DOCX, TXT"
+            )
+        
+        # Check OpenAI API key
+        openai_key = os.getenv("OPENAI_API_KEY")
+        if not openai_key:
+            raise HTTPException(
+                status_code=500,
+                detail="OpenAI API key not configured. Please set OPENAI_API_KEY environment variable."
+            )
+        
+        # Placeholder response
+        return {
+            "score": 78.3,
+            "match_percentage": 78.3,
+            "resume_filename": resume_file.filename,
+            "job_filename": job_file.filename,
+            "model_used": model,
+            "file_sizes": {
+                "resume": resume_file.size or 0,
+                "job": job_file.size or 0
+            },
+            "note": "This is a placeholder response. File processing would be implemented here."
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in match_upload: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@app.post("/ats/validate")
+async def validate_ats(
+    resume_text: str = Form(..., description="Resume text to validate"),
+    job_keywords: str = Form(default="", description="Comma-separated job keywords")
+):
+    """Validate resume for ATS compatibility (placeholder)."""
+    try:
+        # Validate input
+        if not resume_text or not resume_text.strip():
+            raise HTTPException(
+                status_code=400,
+                detail="Resume text cannot be empty"
+            )
+        
+        if len(resume_text) > 50000:  # 50KB limit
+            raise HTTPException(
+                status_code=400,
+                detail="Resume text too long. Maximum length: 50,000 characters"
+            )
+        
+        keywords = [k.strip() for k in job_keywords.split(",") if k.strip()] if job_keywords else []
+        
+        # Placeholder ATS validation
+        return {
+            "compliance_level": "good",
+            "score": 82.5,
+            "issues": [
+                "Missing some industry keywords",
+                "Could improve formatting consistency"
+            ],
+            "recommendations": [
+                f"Include more keywords: {', '.join(keywords[:3]) if keywords else 'industry-specific terms'}",
+                "Use consistent bullet points",
+                "Add more quantifiable achievements"
+            ],
+            "keyword_density": {
+                "total_keywords": len(keywords),
+                "found_keywords": len([k for k in keywords if k.lower() in resume_text.lower()]),
+                "density_score": 0.75
+            },
+            "structure_score": 85.0,
+            "formatting_score": 80.0,
+            "note": "This is a placeholder ATS validation. Real validation would analyze formatting, keywords, and structure."
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in validate_ats: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@app.post("/ats/optimize")
+async def optimize_ats(
+    resume_text: str = Form(..., description="Resume text to optimize"),
+    job_keywords: str = Form(..., description="Comma-separated job keywords")
+):
+    """Optimize resume for ATS compatibility (placeholder)."""
+    try:
+        # Validate input
+        if not resume_text or not resume_text.strip():
+            raise HTTPException(
+                status_code=400,
+                detail="Resume text cannot be empty"
+            )
+        
+        if not job_keywords or not job_keywords.strip():
+            raise HTTPException(
+                status_code=400,
+                detail="Job keywords cannot be empty"
+            )
+        
+        if len(resume_text) > 50000:  # 50KB limit
+            raise HTTPException(
+                status_code=400,
+                detail="Resume text too long. Maximum length: 50,000 characters"
+            )
+        
+        keywords = [k.strip() for k in job_keywords.split(",") if k.strip()]
+        if not keywords:
+            raise HTTPException(
+                status_code=400,
+                detail="No valid keywords provided"
+            )
+        
+        # Placeholder optimization (would use AI to optimize the resume)
+        optimized_resume = resume_text + f"\n\n[OPTIMIZED] Added keywords: {', '.join(keywords[:3])}"
+        
+        return {
+            "optimized_resume": optimized_resume,
+            "original_length": len(resume_text),
+            "optimized_length": len(optimized_resume),
+            "keywords_integrated": len(keywords),
+            "improvements_made": [
+                f"Added {len(keywords)} relevant keywords",
+                "Improved keyword density",
+                "Enhanced formatting consistency"
+            ],
+            "note": "This is a placeholder optimization. Real optimization would use AI to strategically integrate keywords and improve formatting."
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in optimize_ats: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 if __name__ == "__main__":
