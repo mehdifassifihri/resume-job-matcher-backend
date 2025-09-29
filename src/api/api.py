@@ -6,7 +6,7 @@ import tempfile
 import shutil
 import logging
 from typing import Optional
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
@@ -15,6 +15,13 @@ import traceback
 from ..core.models import SuperOutput
 from ..core.config import OPENAI_API_KEY
 from ..core.pipeline import run_pipeline
+from ..auth.routes import router as auth_router
+from ..auth.history_routes import router as history_router
+from ..auth.dependencies import get_current_active_user
+from ..auth.init_db import create_tables
+from ..auth.models import User
+from sqlalchemy.orm import Session
+from ..auth.database import get_db
 
 # Configure logging
 logging.basicConfig(
@@ -27,11 +34,18 @@ logger = logging.getLogger(__name__)
 # Initialize FastAPI app
 app = FastAPI(
     title="AI Resume & Job Matcher — Ultra-Light API",
-    description="AI-powered resume and job matching system",
+    description="AI-powered resume and job matching system with ATS validation and JWT authentication",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
+
+# Include authentication and history routes
+app.include_router(auth_router)
+app.include_router(history_router)
+
+# Initialize database tables
+create_tables()
 
 app.add_middleware(
     CORSMiddleware,
@@ -56,18 +70,6 @@ async def general_exception_handler(request: Request, exc: Exception):
         status_code=500,
         content={"detail": "Internal server error. Please try again later."}
     )
-
-
-@app.get("/health")
-def health():
-    """Health check endpoint."""
-    logger.info("Health check requested")
-    return {
-        "ok": True,
-        "status": "healthy",
-        "version": "1.0.0",
-        "openai_configured": bool(OPENAI_API_KEY)
-    }
 
 
 @app.post("/match/upload", response_model=SuperOutput)
