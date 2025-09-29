@@ -6,23 +6,15 @@ import tempfile
 import shutil
 import logging
 from typing import Optional
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request, Depends
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 import traceback
 
-from ..core.models import MatchRequest, SuperOutput, ATSValidationResult
+from ..core.models import SuperOutput
 from ..core.config import OPENAI_API_KEY
 from ..core.pipeline import run_pipeline
-from ..validators.ats_validator import validate_ats_compliance, optimize_resume_for_ats
-from ..auth.routes import router as auth_router
-from ..auth.history_routes import router as history_router
-from ..auth.dependencies import get_current_active_user
-from ..auth.init_db import create_tables
-from ..auth.models import User, AnalysisHistory
-from sqlalchemy.orm import Session
-from ..auth.database import get_db
 
 # Configure logging
 logging.basicConfig(
@@ -35,18 +27,11 @@ logger = logging.getLogger(__name__)
 # Initialize FastAPI app
 app = FastAPI(
     title="AI Resume & Job Matcher — Ultra-Light API",
-    description="AI-powered resume and job matching system with ATS validation and JWT authentication",
+    description="AI-powered resume and job matching system",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
-
-# Include authentication and history routes
-app.include_router(auth_router)
-app.include_router(history_router)
-
-# Initialize database tables
-create_tables()
 
 app.add_middleware(
     CORSMiddleware,
@@ -83,54 +68,6 @@ def health():
         "version": "1.0.0",
         "openai_configured": bool(OPENAI_API_KEY)
     }
-
-
-@app.post("/match/run", response_model=SuperOutput)
-def match_run(req: MatchRequest):
-    """Run the matching pipeline with text or file paths."""
-    logger.info(f"Match request received - Model: {req.model}")
-    
-    try:
-        # Check if OpenAI API key is available
-        if not OPENAI_API_KEY:
-            logger.error("OpenAI API key not configured")
-            raise HTTPException(
-                status_code=500,
-                detail="OpenAI API key not configured. Please set OPENAI_API_KEY environment variable."
-            )
-        
-        # Validate input
-        if not req.resume_text and not req.resume_file_path:
-            raise HTTPException(
-                status_code=400,
-                detail="Either resume_text or resume_file_path must be provided"
-            )
-        
-        if not req.job_text and not req.job_file_path:
-            raise HTTPException(
-                status_code=400,
-                detail="Either job_text or job_file_path must be provided"
-            )
-        
-        logger.info("Starting pipeline processing")
-        result = run_pipeline(
-            req.resume_text,
-            req.job_text,
-            req.resume_file_path,
-            req.job_file_path,
-            req.model,
-            include_ats_validation=True
-        )
-        
-        logger.info(f"Pipeline completed successfully - Score: {result.score}")
-        
-        return result
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error in match_run: {str(e)}\n{traceback.format_exc()}")
-        raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
 
 
 @app.post("/match/upload", response_model=SuperOutput)
@@ -220,102 +157,4 @@ async def match_upload(
                 logger.warning(f"Failed to delete job temp file: {e}")
 
 
-@app.post("/ats/validate", response_model=ATSValidationResult)
-async def validate_ats(
-    resume_text: str = Form(..., description="Resume text to validate"),
-    job_keywords: str = Form(default="", description="Comma-separated job keywords"),
-    current_user: User = Depends(get_current_active_user)
-):
-    """Validate resume for ATS compatibility."""
-    logger.info("ATS validation request received")
-    
-    try:
-        # Validate input
-        if not resume_text or not resume_text.strip():
-            raise HTTPException(
-                status_code=400,
-                detail="Resume text cannot be empty"
-            )
-        
-        if len(resume_text) > 50000:  # 50KB limit
-            raise HTTPException(
-                status_code=400,
-                detail="Resume text too long. Maximum length: 50,000 characters"
-            )
-        
-        keywords = [k.strip() for k in job_keywords.split(",") if k.strip()] if job_keywords else []
-        logger.info(f"Validating ATS compliance with {len(keywords)} keywords")
-        
-        result = validate_ats_compliance(resume_text, keywords)
-        
-        logger.info(f"ATS validation completed - Score: {result.score}, Level: {result.compliance_level.value}")
-        return ATSValidationResult(
-            compliance_level=result.compliance_level.value,
-            score=result.score,
-            issues=result.issues,
-            recommendations=result.recommendations,
-            keyword_density=result.keyword_density,
-            structure_score=result.structure_score,
-            formatting_score=result.formatting_score
-        )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error in validate_ats: {str(e)}\n{traceback.format_exc()}")
-        raise HTTPException(status_code=500, detail=f"Error validating ATS compliance: {str(e)}")
-
-
-@app.post("/ats/optimize")
-async def optimize_ats(
-    resume_text: str = Form(..., description="Resume text to optimize"),
-    job_keywords: str = Form(..., description="Comma-separated job keywords"),
-    current_user: User = Depends(get_current_active_user)
-):
-    """Optimize resume for ATS compatibility."""
-    logger.info("ATS optimization request received")
-    
-    try:
-        # Validate input
-        if not resume_text or not resume_text.strip():
-            raise HTTPException(
-                status_code=400,
-                detail="Resume text cannot be empty"
-            )
-        
-        if not job_keywords or not job_keywords.strip():
-            raise HTTPException(
-                status_code=400,
-                detail="Job keywords cannot be empty"
-            )
-        
-        if len(resume_text) > 50000:  # 50KB limit
-            raise HTTPException(
-                status_code=400,
-                detail="Resume text too long. Maximum length: 50,000 characters"
-            )
-        
-        keywords = [k.strip() for k in job_keywords.split(",") if k.strip()]
-        if not keywords:
-            raise HTTPException(
-                status_code=400,
-                detail="No valid keywords provided"
-            )
-        
-        logger.info(f"Optimizing resume for ATS with {len(keywords)} keywords")
-        optimized_resume = optimize_resume_for_ats(resume_text, keywords)
-        
-        logger.info("ATS optimization completed successfully")
-        return {
-            "optimized_resume": optimized_resume,
-            "original_length": len(resume_text),
-            "optimized_length": len(optimized_resume),
-            "keywords_integrated": len(keywords)
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error in optimize_ats: {str(e)}\n{traceback.format_exc()}")
-        raise HTTPException(status_code=500, detail=f"Error optimizing for ATS: {str(e)}")
 
