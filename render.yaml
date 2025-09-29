@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: resume-job-matcher-backend
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m src.main
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///./resume_matcher.db
+      - key: PORT
+        value: 8000
+    healthCheckPath: /health
+    autoDeploy: true
