@@ -1,0 +1,18 @@
+# Requirements without any Rust dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+openai==1.3.7
+pydantic==2.5.0
+langdetect==1.0.9
+pypdf==3.17.4
+python-docx==1.1.0
+python-dotenv==1.0.0
+python-multipart==0.0.6
+# Pure Python JWT implementation
+PyJWT==2.8.0
+# Pure Python password hashing (no bcrypt)
+argon2-cffi==23.1.0
+# Database without potential Rust issues
+sqlalchemy==2.0.23
+# Remove alembic for now
+# alembic==1.12.1
