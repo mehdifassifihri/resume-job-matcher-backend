@@ -3,8 +3,8 @@ services:
     name: resume-job-matcher-backend
     env: python
     plan: starter
-    buildCommand: pip install -r requirements-basic.txt
-    startCommand: python -m src.main_basic
+    buildCommand: ./build-no-rust.sh
+    startCommand: python -m src.main_ultra_minimal
     envVars:
       - key: OPENAI_API_KEY
         sync: false
