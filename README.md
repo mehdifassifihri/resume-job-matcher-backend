@@ -3,9 +3,8 @@
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com)
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-orange.svg)](https://openai.com)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A powerful AI-powered resume and job matching system that analyzes resumes against job descriptions, provides compatibility scores, generates tailored resumes, and validates ATS (Applicant Tracking System) compliance.
+A powerful AI-powered resume and job matching system that analyzes resumes against job descriptions, provides compatibility scores, and generates tailored resumes with user authentication and history tracking.
 
 ## 🚀 Features
 
@@ -13,7 +12,6 @@ A powerful AI-powered resume and job matching system that analyzes resumes again
 - **Intelligent Resume-Job Matching**: Advanced AI analysis of resume compatibility with job requirements
 - **Compatibility Scoring**: Detailed scoring system (0-100) with breakdown by skills, responsibilities, and seniority
 - **Resume Tailoring**: AI-generated tailored resumes optimized for specific job applications
-- **ATS Validation**: Comprehensive ATS compliance checking and optimization
 - **Multi-format Support**: Handles PDF, DOCX, and TXT files for both resumes and job descriptions
 
 ### Advanced Features
@@ -30,69 +28,24 @@ A powerful AI-powered resume and job matching system that analyzes resumes again
 - **Payment History**: Manage and track payment records for premium features
 - **Protected Endpoints**: All analysis endpoints require authentication
 
-### API Endpoints
+## 📋 API Endpoints
 
-#### Authentication (Public)
+### Authentication (Public)
 - `POST /auth/register` - Register a new user
 - `POST /auth/login` - Login and get JWT tokens
 - `POST /auth/refresh` - Refresh access token
 - `GET /auth/me` - Get current user information
 
-#### Analysis (Protected - Requires JWT)
-- `POST /match/run` - Process text-based resume and job description matching
+### Analysis (Protected - Requires JWT)
 - `POST /match/upload` - Handle file uploads for resume and job description processing
-- `POST /ats/validate` - Validate resume for ATS compatibility
-- `POST /ats/optimize` - Optimize resume for ATS systems
 
-#### History (Protected - Requires JWT)
+### History (Protected - Requires JWT)
 - `GET /history/analyses` - Get user's analysis history
 - `GET /history/analyses/{id}` - Get specific analysis details
+- `POST /history/analyses` - Create new analysis record
 - `GET /history/payments` - Get user's payment history
 - `GET /history/payments/{id}` - Get specific payment details
-
-#### System
-- `GET /health` - Health check endpoint
-
-## 📋 Requirements
-
-- Python 3.8 or higher
-- OpenAI API key
-- Internet connection for AI processing
-
-## 🔧 Setup
-
-1. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Set environment variables:**
-   Create a `.env` file with:
-   ```env
-   OPENAI_API_KEY=your-openai-api-key-here
-   JWT_SECRET_KEY=your-super-secret-jwt-key-change-this-in-production
-   DATABASE_URL=sqlite:///./resume_matcher.db
-   ```
-
-3. **Run the application:**
-   ```bash
-   python src/main.py
-   ```
-
-4. **Test authentication:**
-   ```bash
-   python test_auth.py
-   ```
-
-## 🔐 Authentication
-
-The API now uses JWT (JSON Web Tokens) for authentication. All analysis endpoints require a valid JWT token in the Authorization header:
-
-```http
-Authorization: Bearer <your-jwt-token>
-```
-
-See [AUTHENTICATION.md](AUTHENTICATION.md) for detailed authentication setup and usage instructions.
+- `POST /history/payments` - Create new payment record
 
 ## 🛠️ Installation
 
@@ -101,7 +54,7 @@ See [AUTHENTICATION.md](AUTHENTICATION.md) for detailed authentication setup and
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd resume-job-matcher
+   cd resume-job-matcher-backend
    ```
 
 2. **Create virtual environment**
@@ -112,7 +65,7 @@ See [AUTHENTICATION.md](AUTHENTICATION.md) for detailed authentication setup and
 
 3. **Install dependencies**
    ```bash
-   pip install -r assets/requirements.txt
+   pip install -r requirements.txt
    ```
 
 4. **Set up environment variables**
@@ -128,7 +81,6 @@ See [AUTHENTICATION.md](AUTHENTICATION.md) for detailed authentication setup and
    ```
 
 The API will be available at `http://localhost:8000`
-
 
 ## 🔧 Configuration
 
@@ -153,57 +105,65 @@ You can set these as environment variables or create a `.env` file in the root d
 
 ### API Usage
 
-#### 1. Text-based Matching
+#### 1. User Registration
 
 ```python
 import requests
 
-url = "http://localhost:8000/match/run"
+url = "http://localhost:8000/auth/register"
 data = {
-    "resume_text": "Your resume text here...",
-    "job_text": "Job description text here...",
-    "model": "gpt-4o-mini"
+    "username": "your_username",
+    "email": "your_email@example.com",
+    "password": "your_password"
 }
 
 response = requests.post(url, json=data)
 result = response.json()
-
-print(f"Compatibility Score: {result['score']}")
-print(f"Tailored Resume: {result['tailored_resume_text']}")
 ```
 
-#### 2. File Upload Matching
+#### 2. User Login
+
+```python
+import requests
+
+url = "http://localhost:8000/auth/login"
+data = {
+    "email": "your_email@example.com",
+    "password": "your_password"
+}
+
+response = requests.post(url, json=data)
+tokens = response.json()
+access_token = tokens["access_token"]
+```
+
+#### 3. File Upload Matching
 
 ```python
 import requests
 
 url = "http://localhost:8000/match/upload"
+headers = {"Authorization": f"Bearer {access_token}"}
 files = {
     'resume_file': open('resume.pdf', 'rb'),
     'job_file': open('job_description.pdf', 'rb')
 }
 data = {'model': 'gpt-4o-mini'}
 
-response = requests.post(url, files=files, data=data)
+response = requests.post(url, files=files, data=data, headers=headers)
 result = response.json()
 ```
 
-#### 3. ATS Validation
+#### 4. Get Analysis History
 
 ```python
 import requests
 
-url = "http://localhost:8000/ats/validate"
-data = {
-    'resume_text': 'Your resume text...',
-    'job_keywords': 'Python, React, AWS, Docker'
-}
+url = "http://localhost:8000/history/analyses"
+headers = {"Authorization": f"Bearer {access_token}"}
 
-response = requests.post(url, data=data)
-ats_result = response.json()
-
-print(f"ATS Score: {ats_result['score']}")
-print(f"Compliance Level: {ats_result['compliance_level']}")
+response = requests.get(url, headers=headers)
+history = response.json()
 ```
 
 ### Response Structure
@@ -239,14 +199,12 @@ print(f"Compliance Level: {ats_result['compliance_level']}")
 ### For Job Seekers
 - **Resume Optimization**: Tailor your resume for specific job applications
 - **Skill Gap Analysis**: Identify missing skills and areas for improvement
-- **ATS Compliance**: Ensure your resume passes through ATS systems
 - **Compatibility Assessment**: Understand how well you match job requirements
 
 ### For Recruiters
 - **Candidate Screening**: Quickly assess candidate-job fit
 - **Resume Analysis**: Extract structured information from resumes
 - **Skill Matching**: Identify candidates with required technical skills
-- **ATS Validation**: Ensure candidate resumes are ATS-compliant
 
 ### For HR Departments
 - **Bulk Processing**: Process multiple resumes against job descriptions
@@ -258,99 +216,46 @@ print(f"Compliance Level: {ats_result['compliance_level']}")
 ### Architecture
 - **FastAPI**: Modern, fast web framework for building APIs
 - **LangChain**: Framework for developing applications with LLMs
-- **OpenAI GPT**: Advanced language model for text processing
-- **Pydantic**: Data validation and settings management
-- **PyPDF/DOCX**: Document parsing and text extraction
+- **OpenAI GPT**: Advanced language models for AI processing
+- **SQLAlchemy**: SQL toolkit and Object-Relational Mapping
+- **JWT**: JSON Web Tokens for secure authentication
+- **SQLite**: Lightweight database for user data and history
 
-### Processing Pipeline
-1. **Input Normalization**: Clean and standardize input text
-2. **Document Parsing**: Extract text from PDF, DOCX, or TXT files
-3. **Job Description Analysis**: Parse and structure job requirements
-4. **Resume Analysis**: Extract candidate information and skills
-5. **Matching Algorithm**: Calculate compatibility scores
-6. **Resume Tailoring**: Generate optimized resume content
-7. **ATS Validation**: Check and optimize for ATS compliance
-8. **Safety Checks**: Validate output for accuracy and appropriateness
+### Security
+- **JWT Authentication**: Secure token-based authentication
+- **Password Hashing**: Secure password storage with bcrypt
+- **Input Validation**: Comprehensive input validation and sanitization
+- **Error Handling**: Secure error handling without information leakage
 
-### Supported File Formats
-- **Resumes**: PDF, DOCX, TXT
-- **Job Descriptions**: PDF, DOCX, TXT
-- **Languages**: English, French, and other languages (auto-detected)
+### Performance
+- **Optimized Processing**: 5-15 second processing times
+- **Memory Efficient**: Efficient file processing and cleanup
+- **Concurrent Support**: Handle multiple requests simultaneously
+- **Caching**: Intelligent caching for improved performance
 
-## 🛡️ Security & Privacy
+## 📚 Documentation
 
-- **No Data Storage**: Files are processed in memory and immediately deleted
-- **API Key Security**: Secure handling of OpenAI API keys
-- **Input Validation**: Comprehensive validation of all inputs
-- **Error Handling**: Graceful error handling with informative messages
-
-## 📊 Performance
-
-- **Processing Time**: Typically 5-15 seconds per resume-job pair
-- **Concurrent Requests**: Supports multiple simultaneous requests
-- **Memory Usage**: Optimized for minimal memory footprint
-- **Scalability**: Designed for horizontal scaling
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **OpenAI API Key Error**
-   ```
-   Error: OpenAI API key not configured
-   Solution: Set OPENAI_API_KEY environment variable
-   ```
-
-2. **File Upload Issues**
-   ```
-   Error: Unsupported file format
-   Solution: Use PDF, DOCX, or TXT files only
-   ```
-
-3. **Memory Issues**
-   ```
-   Error: Out of memory
-   Solution: Process smaller files or increase server memory
-   ```
-
-### Debug Mode
-
-Enable debug logging by setting the environment variable:
-```bash
-export DEBUG=true
-```
+- [API Documentation](docs/API.md) - Complete API reference
+- [Installation Guide](docs/INSTALLATION.md) - Detailed setup instructions
+- [Features Overview](docs/FEATURES.md) - Comprehensive feature list
+- [Deployment Guide](docs/DEPLOYMENT.md) - Production deployment
+- [FAQ](docs/FAQ.md) - Frequently asked questions
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+We welcome contributions! Please see our contributing guidelines for details on how to get started.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is open source and available under the MIT License.
 
 ## 🆘 Support
 
-For support and questions:
-- Create an issue in the repository
-- Check the [FAQ](FAQ.md) for common questions
-- Review the [API Documentation](docs/API.md)
-
-## 🔄 Changelog
-
-### Version 1.0.0
-- Initial release
-- Core resume-job matching functionality
-- ATS validation and optimization
-- Multi-format file support
-- RESTful API endpoints
-
-## 🏆 Acknowledgments
-
-- OpenAI for providing the GPT models
-- FastAPI team for the excellent web framework
-- LangChain for LLM application framework
-- The open-source community for various dependencies
+If you encounter any issues or have questions, please:
+1. Check the [FAQ](docs/FAQ.md)
+2. Review the [API Documentation](docs/API.md)
+3. Open an issue on GitHub
 
 ---
 
-**Made with ❤️ for the job matching community**
+**Made with ❤️ for better job matching**

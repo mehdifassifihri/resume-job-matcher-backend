@@ -2,7 +2,7 @@
 
 ## Overview
 
-The AI Resume & Job Matcher API provides endpoints for analyzing resume-job compatibility, generating tailored resumes, and validating ATS compliance. All endpoints return JSON responses and support CORS for cross-origin requests.
+The AI Resume & Job Matcher API provides endpoints for analyzing resume-job compatibility, generating tailored resumes, and managing user authentication and history. All endpoints return JSON responses and support CORS for cross-origin requests.
 
 ## Base URL
 
@@ -12,53 +12,137 @@ http://localhost:8000
 
 ## Authentication
 
-Currently, the API does not require authentication. However, you need a valid OpenAI API key configured in your environment.
+The API uses JWT (JSON Web Token) authentication for protected endpoints. You need to register/login to get access tokens.
 
 ## Endpoints
 
-### 1. Health Check
+### Authentication Endpoints
 
-Check if the API is running and healthy.
+#### 1. User Registration
 
-**Endpoint:** `GET /health`
+Register a new user account.
+
+**Endpoint:** `POST /auth/register`
+
+**Request Body:**
+```json
+{
+  "username": "string",
+  "email": "string",
+  "password": "string"
+}
+```
 
 **Response:**
 ```json
 {
-  "ok": true
+  "id": 1,
+  "username": "john_doe",
+  "email": "john@example.com",
+  "is_active": true,
+  "created_at": "2024-01-01T00:00:00Z"
 }
 ```
 
 **Example:**
 ```bash
-curl -X GET "http://localhost:8000/health"
+curl -X POST "http://localhost:8000/auth/register" \
+  -H "Content-Type: application/json" \
+  -d '{"username": "john_doe", "email": "john@example.com", "password": "secure_password"}'
 ```
 
 ---
 
-### 2. Text-based Matching
+#### 2. User Login
 
-Process resume and job description text for compatibility analysis.
+Login and get JWT tokens.
 
-**Endpoint:** `POST /match/run`
+**Endpoint:** `POST /auth/login`
 
 **Request Body:**
 ```json
 {
-  "resume_text": "string (optional)",
-  "job_text": "string (optional)",
-  "resume_file_path": "string (optional)",
-  "job_file_path": "string (optional)",
-  "model": "string (default: gpt-4o-mini)"
+  "email": "string",
+  "password": "string"
 }
 ```
 
-**Parameters:**
-- `resume_text`: Raw resume text content
-- `job_text`: Raw job description text content
-- `resume_file_path`: Path to resume file (PDF, DOCX, TXT)
-- `job_file_path`: Path to job description file (PDF, DOCX, TXT)
-- `model`: OpenAI model to use (gpt-4o-mini, gpt-4o, gpt-4-turbo, gpt-3.5-turbo)
+**Response:**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
+}
+```
+
+**Example:**
+```bash
+curl -X POST "http://localhost:8000/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "john@example.com", "password": "secure_password"}'
+```
+
+---
+
+#### 3. Refresh Token
+
+Refresh access token using refresh token.
+
+**Endpoint:** `POST /auth/refresh`
+
+**Request Body:**
+```json
+{
+  "refresh_token": "string"
+}
+```
+
+**Response:**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
+}
+```
+
+---
+
+#### 4. Get Current User
+
+Get current user information.
+
+**Endpoint:** `GET /auth/me`
+
+**Headers:** `Authorization: Bearer <access_token>`
+
+**Response:**
+```json
+{
+  "id": 1,
+  "username": "john_doe",
+  "email": "john@example.com",
+  "is_active": true,
+  "created_at": "2024-01-01T00:00:00Z"
+}
+```
+
+---
+
+### Analysis Endpoints
+
+#### 1. File Upload Matching
+
+Process resume and job description files for compatibility analysis.
+
+**Endpoint:** `POST /match/upload`
+
+**Headers:** `Authorization: Bearer <access_token>`
+
+**Request Body:** `multipart/form-data`
+- `resume_file`: Resume file (PDF, DOCX, or TXT)
+- `job_file`: Job description file (PDF, DOCX, or TXT)
+- `model`: OpenAI model to use (default: "gpt-4o-mini")
 
 **Response:**
 ```json
@@ -89,161 +173,171 @@ Process resume and job description text for compatibility analysis.
 
 **Example:**
 ```bash
-curl -X POST "http://localhost:8000/match/run" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "resume_text": "John Smith\nSoftware Engineer...",
-    "job_text": "Senior Full-Stack Developer...",
-    "model": "gpt-4o-mini"
-  }'
-```
-
----
-
-### 3. File Upload Matching
-
-Process uploaded resume and job description files.
-
-**Endpoint:** `POST /match/upload`
-
-**Request:** Multipart form data
-
-**Parameters:**
-- `resume_file`: Resume file (PDF, DOCX, TXT) - required
-- `job_file`: Job description file (PDF, DOCX, TXT) - required
-- `model`: OpenAI model to use (default: gpt-4o-mini)
-
-**Response:** Same as `/match/run`
-
-**Example:**
-```bash
 curl -X POST "http://localhost:8000/match/upload" \
+  -H "Authorization: Bearer <access_token>" \
   -F "resume_file=@resume.pdf" \
   -F "job_file=@job_description.pdf" \
   -F "model=gpt-4o-mini"
 ```
 
-**Python Example:**
-```python
-import requests
+---
 
-files = {
-    'resume_file': open('resume.pdf', 'rb'),
-    'job_file': open('job_description.pdf', 'rb')
-}
-data = {'model': 'gpt-4o-mini'}
+### History Endpoints
 
-response = requests.post('http://localhost:8000/match/upload', files=files, data=data)
-result = response.json()
+#### 1. Get Analysis History
+
+Get user's CV analysis history.
+
+**Endpoint:** `GET /history/analyses`
+
+**Headers:** `Authorization: Bearer <access_token>`
+
+**Query Parameters:**
+- `skip`: Number of records to skip (default: 0)
+- `limit`: Number of records to return (default: 10, max: 100)
+
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "tailored_resume": "Optimized resume content...",
+    "job_text": "Job description text...",
+    "model_used": "gpt-4o-mini",
+    "score": 85.5,
+    "analysis_result": "Analysis details...",
+    "created_at": "2024-01-01T00:00:00Z"
+  }
+]
 ```
 
 ---
 
-### 4. ATS Validation
+#### 2. Get Analysis Detail
 
-Validate resume for ATS (Applicant Tracking System) compatibility.
+Get detailed information about a specific analysis.
 
-**Endpoint:** `POST /ats/validate`
+**Endpoint:** `GET /history/analyses/{analysis_id}`
 
-**Request:** Form data
-
-**Parameters:**
-- `resume_text`: Resume text to validate - required
-- `job_keywords`: Comma-separated job keywords (optional)
+**Headers:** `Authorization: Bearer <access_token>`
 
 **Response:**
 ```json
 {
-  "compliance_level": "good",
-  "score": 78.5,
-  "issues": [
-    "No clear contact information found",
-    "Few quantified achievements - add more metrics and numbers"
-  ],
-  "recommendations": [
-    "Include specific numbers, percentages, and metrics in your achievements",
-    "Start bullet points with strong action verbs"
-  ],
-  "keyword_density": {
-    "Python": 2.1,
-    "JavaScript": 1.8,
-    "React": 1.5
-  },
-  "structure_score": 85.0,
-  "formatting_score": 72.0
+  "id": 1,
+  "user_id": 1,
+  "tailored_resume": "Optimized resume content...",
+  "job_text": "Job description text...",
+  "model_used": "gpt-4o-mini",
+  "score": 85.5,
+  "analysis_result": "Analysis details...",
+  "created_at": "2024-01-01T00:00:00Z"
 }
-```
-
-**Example:**
-```bash
-curl -X POST "http://localhost:8000/ats/validate" \
-  -F "resume_text=John Smith\nSoftware Engineer..." \
-  -F "job_keywords=Python,JavaScript,React,AWS"
 ```
 
 ---
 
-### 5. ATS Optimization
+#### 3. Create Analysis Record
 
-Optimize resume for ATS compatibility.
+Create a new analysis record.
 
-**Endpoint:** `POST /ats/optimize`
+**Endpoint:** `POST /history/analyses`
 
-**Request:** Form data
+**Headers:** `Authorization: Bearer <access_token>`
 
-**Parameters:**
-- `resume_text`: Resume text to optimize - required
-- `job_keywords`: Comma-separated job keywords - required
+**Request Body:**
+```json
+{
+  "tailored_resume": "string (optional)",
+  "job_text": "string (optional)",
+  "resume_file_path": "string (optional)",
+  "job_file_path": "string (optional)",
+  "model_used": "string (default: gpt-4o-mini)",
+  "score": "number (default: 0.0)",
+  "analysis_result": "string (optional)"
+}
+```
+
+---
+
+#### 4. Get Payment History
+
+Get user's payment history.
+
+**Endpoint:** `GET /history/payments`
+
+**Headers:** `Authorization: Bearer <access_token>`
+
+**Query Parameters:**
+- `skip`: Number of records to skip (default: 0)
+- `limit`: Number of records to return (default: 10, max: 100)
+
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "amount": 29.99,
+    "currency": "EUR",
+    "payment_method": "stripe",
+    "payment_status": "completed",
+    "transaction_id": "txn_123456789",
+    "description": "Premium subscription",
+    "created_at": "2024-01-01T00:00:00Z"
+  }
+]
+```
+
+---
+
+#### 5. Get Payment Detail
+
+Get detailed information about a specific payment.
+
+**Endpoint:** `GET /history/payments/{payment_id}`
+
+**Headers:** `Authorization: Bearer <access_token>`
 
 **Response:**
 ```json
 {
-  "optimized_resume": "Optimized resume content...",
-  "original_length": 2450,
-  "optimized_length": 2380,
-  "keywords_integrated": 8
+  "id": 1,
+  "user_id": 1,
+  "amount": 29.99,
+  "currency": "EUR",
+  "payment_method": "stripe",
+  "payment_status": "completed",
+  "transaction_id": "txn_123456789",
+  "description": "Premium subscription",
+  "created_at": "2024-01-01T00:00:00Z"
 }
 ```
 
-**Example:**
-```bash
-curl -X POST "http://localhost:8000/ats/optimize" \
-  -F "resume_text=John Smith\nSoftware Engineer..." \
-  -F "job_keywords=Python,JavaScript,React,AWS,Docker"
+---
+
+#### 6. Create Payment Record
+
+Create a new payment record.
+
+**Endpoint:** `POST /history/payments`
+
+**Headers:** `Authorization: Bearer <access_token>`
+
+**Request Body:**
+```json
+{
+  "amount": 29.99,
+  "currency": "EUR (default)",
+  "payment_method": "string (optional)",
+  "payment_status": "pending (default)",
+  "transaction_id": "string (optional)",
+  "description": "string (optional)"
+}
 ```
 
-## Response Fields
-
-### Match Response Fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `score` | float | Overall compatibility score (0-100) |
-| `coverage` | object | Detailed coverage breakdown |
-| `coverage.must_have` | float | Must-have skills coverage percentage |
-| `coverage.responsibilities` | float | Responsibilities coverage percentage |
-| `coverage.seniority_fit` | float | Seniority fit percentage |
-| `gaps` | object | Analysis of gaps and matches |
-| `gaps.matched_skills` | array | Skills that match job requirements |
-| `gaps.missing_skills` | array | Skills missing from resume |
-| `gaps.weak_evidence_for_responsibilities` | array | Responsibilities with weak evidence |
-| `rationale` | string | Explanation of the score |
-| `tailored_resume_text` | string | AI-generated tailored resume |
-| `recommendations` | array | Actionable improvement suggestions |
-| `flags` | array | Warning flags for potential issues |
-| `meta` | object | Metadata about the processing |
-
-### ATS Validation Fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `compliance_level` | string | ATS compliance level (excellent/good/fair/poor) |
-| `score` | float | Overall ATS score (0-100) |
-| `issues` | array | List of ATS compliance issues |
-| `recommendations` | array | Suggestions for improvement |
-| `keyword_density` | object | Keyword density analysis |
-| `structure_score` | float | Resume structure score (0-100) |
-| `formatting_score` | float | Resume formatting score (0-100) |
+---
 
 ## Error Responses
 
@@ -256,10 +350,45 @@ All endpoints return appropriate HTTP status codes and error messages:
 }
 ```
 
+**401 Unauthorized:**
+```json
+{
+  "detail": "Not authenticated"
+}
+```
+
+**403 Forbidden:**
+```json
+{
+  "detail": "Not enough permissions"
+}
+```
+
+**404 Not Found:**
+```json
+{
+  "detail": "Resource not found"
+}
+```
+
+**422 Unprocessable Entity:**
+```json
+{
+  "detail": "Validation error",
+  "errors": [
+    {
+      "loc": ["field_name"],
+      "msg": "error message",
+      "type": "error_type"
+    }
+  ]
+}
+```
+
 **500 Internal Server Error:**
 ```json
 {
-  "detail": "Error processing request: OpenAI API key not configured"
+  "detail": "Internal server error. Please try again later."
 }
 ```
 
@@ -276,156 +405,14 @@ Currently, there are no rate limits implemented. For production use, consider im
 ## Processing Time
 
 Typical processing times:
-- Text-based matching: 5-15 seconds
 - File upload matching: 8-20 seconds
-- ATS validation: 2-5 seconds
-- ATS optimization: 3-8 seconds
+- Authentication: < 1 second
+- History retrieval: < 1 second
 
 ## Best Practices
 
 1. **Use appropriate models**: `gpt-4o-mini` for cost-effectiveness, `gpt-4o` for best quality
-2. **Provide clean text**: Remove formatting artifacts for better processing
-3. **Include relevant keywords**: For ATS validation, provide job-specific keywords
-4. **Handle errors gracefully**: Always check response status codes
-5. **Respect rate limits**: Implement appropriate delays between requests
-
-## SDK Examples
-
-### Python SDK
-
-```python
-import requests
-import json
-
-class ResumeMatcherAPI:
-    def __init__(self, base_url="http://localhost:8000"):
-        self.base_url = base_url
-    
-    def health_check(self):
-        response = requests.get(f"{self.base_url}/health")
-        return response.json()
-    
-    def match_text(self, resume_text, job_text, model="gpt-4o-mini"):
-        data = {
-            "resume_text": resume_text,
-            "job_text": job_text,
-            "model": model
-        }
-        response = requests.post(f"{self.base_url}/match/run", json=data)
-        return response.json()
-    
-    def match_files(self, resume_file, job_file, model="gpt-4o-mini"):
-        files = {
-            'resume_file': open(resume_file, 'rb'),
-            'job_file': open(job_file, 'rb')
-        }
-        data = {'model': model}
-        response = requests.post(f"{self.base_url}/match/upload", files=files, data=data)
-        files['resume_file'].close()
-        files['job_file'].close()
-        return response.json()
-    
-    def validate_ats(self, resume_text, job_keywords=""):
-        data = {
-            'resume_text': resume_text,
-            'job_keywords': job_keywords
-        }
-        response = requests.post(f"{self.base_url}/ats/validate", data=data)
-        return response.json()
-    
-    def optimize_ats(self, resume_text, job_keywords):
-        data = {
-            'resume_text': resume_text,
-            'job_keywords': job_keywords
-        }
-        response = requests.post(f"{self.base_url}/ats/optimize", data=data)
-        return response.json()
-
-# Usage
-api = ResumeMatcherAPI()
-result = api.match_text("resume text...", "job description...")
-print(f"Score: {result['score']}")
-```
-
-### JavaScript SDK
-
-```javascript
-class ResumeMatcherAPI {
-    constructor(baseUrl = 'http://localhost:8000') {
-        this.baseUrl = baseUrl;
-    }
-    
-    async healthCheck() {
-        const response = await fetch(`${this.baseUrl}/health`);
-        return await response.json();
-    }
-    
-    async matchText(resumeText, jobText, model = 'gpt-4o-mini') {
-        const response = await fetch(`${this.baseUrl}/match/run`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                resume_text: resumeText,
-                job_text: jobText,
-                model: model
-            })
-        });
-        return await response.json();
-    }
-    
-    async matchFiles(resumeFile, jobFile, model = 'gpt-4o-mini') {
-        const formData = new FormData();
-        formData.append('resume_file', resumeFile);
-        formData.append('job_file', jobFile);
-        formData.append('model', model);
-        
-        const response = await fetch(`${this.baseUrl}/match/upload`, {
-            method: 'POST',
-            body: formData
-        });
-        return await response.json();
-    }
-    
-    async validateATS(resumeText, jobKeywords = '') {
-        const formData = new FormData();
-        formData.append('resume_text', resumeText);
-        formData.append('job_keywords', jobKeywords);
-        
-        const response = await fetch(`${this.baseUrl}/ats/validate`, {
-            method: 'POST',
-            body: formData
-        });
-        return await response.json();
-    }
-    
-    async optimizeATS(resumeText, jobKeywords) {
-        const formData = new FormData();
-        formData.append('resume_text', resumeText);
-        formData.append('job_keywords', jobKeywords);
-        
-        const response = await fetch(`${this.baseUrl}/ats/optimize`, {
-            method: 'POST',
-            body: formData
-        });
-        return await response.json();
-    }
-}
-
-// Usage
-const api = new ResumeMatcherAPI();
-api.matchText('resume text...', 'job description...')
-    .then(result => console.log(`Score: ${result.score}`))
-    .catch(error => console.error('Error:', error));
-```
-
-## Testing
-
-Use the provided test script to verify API functionality:
-
-```bash
-python samples/test_api.py
-```
-
-This will test all endpoints with sample data and provide detailed output about the results.
+2. **Provide clean files**: Remove formatting artifacts for better processing
+3. **Handle errors gracefully**: Implement proper error handling in your client
+4. **Store tokens securely**: Keep JWT tokens secure and refresh them as needed
+5. **Use HTTPS in production**: Always use HTTPS for production deployments
