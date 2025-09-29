@@ -1,3 +1,5 @@
+# Render-optimized requirements.txt
+# This version avoids packages that require Rust compilation
 
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
@@ -12,11 +14,11 @@ pypdf==3.17.4
 python-docx==1.1.0
 python-dotenv==1.0.0
 python-multipart==0.0.6
-# Use specific versions that work well on Render
+# Use pre-compiled versions to avoid Rust compilation issues
 python-jose==3.3.0
 passlib==1.7.4
 sqlalchemy==2.0.23
 alembic==1.12.1
-# Pre-compiled cryptography to avoid Rust issues
+# Additional packages for better compatibility
 cryptography==41.0.7
 bcrypt==4.0.1
