@@ -1,10 +1,12 @@
-# Frequently Asked Questions (FAQ)
+# AI Resume & Job Matcher - Frequently Asked Questions (FAQ)
+
+## 🚀 Premium Product FAQ
 
 ## General Questions
 
 ### What is the AI Resume & Job Matcher?
 
-The AI Resume & Job Matcher is a powerful API service that uses artificial intelligence to analyze resume-job compatibility, generate tailored resumes, and provide user authentication with history tracking. It helps job seekers optimize their resumes and assists recruiters in candidate screening.
+The AI Resume & Job Matcher is a premium, enterprise-grade API service that uses cutting-edge artificial intelligence to analyze resume-job compatibility, generate tailored resumes, and provide comprehensive user authentication with history tracking. This commercial-grade solution helps HR departments, recruitment agencies, job boards, and career coaching services optimize their recruitment processes and deliver superior candidate matching services.
 
 ### How does it work?
 
@@ -285,35 +287,63 @@ Yes, but consider:
 - **Backup** - Regular database backups
 - **Scaling** - Consider load balancing for high traffic
 
+## Commercial & Licensing Questions
+
+### What license does this product come with?
+
+This is a **premium commercial product** with a single-use license that includes:
+- ✅ **Commercial Use Rights** - Use in commercial applications
+- ✅ **Modification Rights** - Customize and extend the code
+- ✅ **6 Months Support** - Direct developer support
+- ✅ **Free Updates** - Receive updates for 6 months
+
+### Can I use this in multiple projects?
+
+The license covers **single project use**. For multiple projects, you would need additional licenses.
+
+### Can I resell this product?
+
+No, the license does not permit resale or redistribution of the source code.
+
+### Can I use this for SaaS applications?
+
+Yes, you can use this in SaaS applications under the single-use license terms.
+
+### What about white-label solutions?
+
+Yes, you can white-label this solution for your clients under the single-use license.
+
 ## Support Questions
 
 ### Where can I get help?
 
-1. **Documentation** - Check the API documentation
-2. **FAQ** - Review this FAQ for common issues
-3. **GitHub Issues** - Report bugs and feature requests
-4. **Community** - Join our community discussions
+1. **Premium Support** - Direct developer support via CodeCanyon
+2. **Documentation** - Comprehensive guides and examples
+3. **Email Support** - Priority support for commercial users
+4. **Code Comments** - Well-documented source code
 
 ### How do I report bugs?
 
-1. **Check existing issues** on GitHub
-2. **Create a new issue** with detailed information
-3. **Include logs** and error messages
-4. **Provide steps to reproduce** the issue
+1. **Contact Developer** - Use CodeCanyon's messaging system
+2. **Provide Details** - Include logs and error messages
+3. **Steps to Reproduce** - Clear reproduction steps
+4. **Environment Info** - System and configuration details
 
-### Can I contribute to the project?
+### What support is included?
 
-Yes! We welcome contributions:
-1. **Fork the repository**
-2. **Create a feature branch**
-3. **Make your changes**
-4. **Submit a pull request**
+Premium support includes:
+- Installation assistance
+- Configuration help
+- API integration support
+- Bug fixes and updates
+- Customization guidance
 
 ### Is there a roadmap?
 
-Yes, upcoming features include:
-- Advanced analytics
-- Bulk processing
+Yes, upcoming premium features include:
+- Advanced analytics dashboard
+- Bulk processing capabilities
 - Enhanced AI models
-- Mobile app support
+- Mobile app SDK
 - Advanced security features
+- Multi-tenant support

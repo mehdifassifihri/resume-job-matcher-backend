@@ -1,8 +1,15 @@
-# API Documentation
+# AI Resume & Job Matcher - API Documentation
 
-## Overview
+## 🚀 Premium API Overview
 
-The AI Resume & Job Matcher API provides endpoints for analyzing resume-job compatibility, generating tailored resumes, and managing user authentication and history. All endpoints return JSON responses and support CORS for cross-origin requests.
+The AI Resume & Job Matcher API is a powerful, enterprise-grade solution that provides advanced AI-powered resume analysis, job matching, and user management capabilities. Built with FastAPI and powered by OpenAI's GPT models, this API delivers professional-grade resume optimization services.
+
+### ✨ **Key Benefits**
+- **Enterprise-Ready**: Production-grade API with comprehensive security
+- **AI-Powered**: Advanced GPT-4 integration for superior analysis
+- **Scalable**: Built to handle high-volume commercial usage
+- **Well-Documented**: Complete API reference with examples
+- **Secure**: JWT authentication and data protection
 
 ## Base URL
 

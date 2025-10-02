@@ -1,6 +1,8 @@
-# Installation Guide
+# AI Resume & Job Matcher - Installation Guide
 
-This guide provides detailed step-by-step instructions for installing and setting up the AI Resume & Job Matcher application.
+## 🚀 Premium Installation Guide
+
+This comprehensive guide provides detailed step-by-step instructions for installing and setting up the AI Resume & Job Matcher application. This premium system is designed for enterprise use with production-ready deployment options.
 
 ## Prerequisites
 
