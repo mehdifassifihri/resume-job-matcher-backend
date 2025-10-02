@@ -50,7 +50,11 @@ INSTRUCTIONS:
 3. TAILORED TEXT: Create formatted resume text with all original sections
 4. KEYWORDS: Naturally incorporate job description keywords
 5. RECOMMENDATIONS: Suggest 3-5 actionable improvements
-6. MISSING SKILLS: Add missing skills from job requirements to the skills section of structured_resume
+6. SKILLS SECTION:
+   - Include all matched skills from the analysis
+   - ADD all missing skills from job requirements into the appropriate skill categories
+   - Ensure missing skills appear in the tailored resume even if absent in the original resume
+7. MAINTAIN COHERENCE: Do not invent unrelated facts; integrate missing skills seamlessly into the candidate’s profile
 
 SKILLS CATEGORIES:
 - "programming_languages": Programming languages (Python, Java, C++, JavaScript, SQL, etc.)

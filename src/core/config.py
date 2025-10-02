@@ -9,7 +9,7 @@ load_dotenv()
 
 # API Configuration
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-DEFAULT_MODEL = "gpt-4o-mini"
+DEFAULT_MODEL = os.getenv("DEFAULT_MODEL", "gpt-4o-mini")
 
 # JWT Configuration
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-this-in-production")
@@ -26,6 +26,8 @@ if not OPENAI_API_KEY:
     print("Please set your OpenAI API key:")
     print("export OPENAI_API_KEY='your-api-key-here'")
     print("Or create a .env file with: OPENAI_API_KEY=your-api-key-here")
+else:
+    print("✅ OPENAI_API_KEY is configured")
 
 # Normalization aliases for different categories
 ALIASES = {
