@@ -75,14 +75,13 @@ async def general_exception_handler(request: Request, exc: Exception):
 @app.post("/match/upload", response_model=SuperOutput)
 async def match_upload(
     resume_file: UploadFile = File(..., description="Resume file (PDF, DOCX, or TXT)"),
-    job_file: UploadFile = File(..., description="Job description file (PDF, DOCX, or TXT)"),
+    job_description: str = Form(..., description="Job description text"),
     model: str = Form(default="gpt-4o-mini", description="OpenAI model to use")
 ):
-    """Run the matching pipeline with uploaded files."""
-    logger.info(f"File upload request received - Resume: {resume_file.filename}, Job: {job_file.filename}, Model: {model}")
+    """Run the matching pipeline with uploaded resume file and job description text."""
+    logger.info(f"File upload request received - Resume: {resume_file.filename}, Model: {model}")
     
     resume_path = None
-    job_path = None
     
     try:
         # Check if OpenAI API key is available
@@ -96,18 +95,11 @@ async def match_upload(
         # Validate file types
         allowed_extensions = {'.pdf', '.docx', '.txt'}
         resume_ext = os.path.splitext(resume_file.filename)[1].lower()
-        job_ext = os.path.splitext(job_file.filename)[1].lower()
         
         if resume_ext not in allowed_extensions:
             raise HTTPException(
                 status_code=400,
                 detail=f"Unsupported resume file type: {resume_ext}. Supported types: PDF, DOCX, TXT"
-            )
-        
-        if job_ext not in allowed_extensions:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Unsupported job file type: {job_ext}. Supported types: PDF, DOCX, TXT"
             )
         
         # Check file sizes (10MB limit)
@@ -118,23 +110,13 @@ async def match_upload(
                 detail=f"Resume file too large: {resume_file.size} bytes. Maximum size: 10MB"
             )
         
-        if job_file.size and job_file.size > max_size:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Job file too large: {job_file.size} bytes. Maximum size: 10MB"
-            )
-        
-        # Create temporary files
+        # Create temporary file for resume
         with tempfile.NamedTemporaryFile(delete=False, suffix=f"_{resume_file.filename}") as resume_temp:
             shutil.copyfileobj(resume_file.file, resume_temp)
             resume_path = resume_temp.name
-            
-        with tempfile.NamedTemporaryFile(delete=False, suffix=f"_{job_file.filename}") as job_temp:
-            shutil.copyfileobj(job_file.file, job_temp)
-            job_path = job_temp.name
         
         logger.info("Starting file processing")
-        result = run_pipeline(None, None, resume_path, job_path, model, include_ats_validation=True)
+        result = run_pipeline(None, job_description, resume_path, None, model, include_ats_validation=True)
         logger.info(f"File processing completed successfully - Score: {result.score}")
         
         return result
@@ -151,12 +133,6 @@ async def match_upload(
                 os.unlink(resume_path)
             except Exception as e:
                 logger.warning(f"Failed to delete resume temp file: {e}")
-        
-        if job_path and os.path.exists(job_path):
-            try:
-                os.unlink(job_path)
-            except Exception as e:
-                logger.warning(f"Failed to delete job temp file: {e}")
 
 
 

@@ -54,8 +54,8 @@ class TailoredResumeStruct(BaseModel):
     contact_info: Dict[str, str] = Field(default_factory=dict, description="Contact information (name, email, phone, location, linkedin)")
     summary: str = Field(default="", description="Professional summary/objective")
     experience: List[Dict[str, Any]] = Field(default_factory=list, description="Work experience with company, title, dates, achievements")
-    education: List[Dict[str, str]] = Field(default_factory=list, description="Education with degree, institution, dates")
-    skills: Dict[str, Any] = Field(default_factory=dict, description="Skills organized by category (technical, soft, languages)")
+    education: List[Dict[str, Any]] = Field(default_factory=list, description="Education with degree, institution, dates, key_modules")
+    skills: Dict[str, Any] = Field(default_factory=dict, description="Skills organized by category (technical, soft, missing_technical, missing_soft)")
     certifications: List[Dict[str, str]] = Field(default_factory=list, description="Certifications with name, issuer, date")
     projects: List[Dict[str, Any]] = Field(default_factory=list, description="Relevant projects with name, description, technologies")
     achievements: List[str] = Field(default_factory=list, description="Key achievements and accomplishments")
@@ -65,7 +65,6 @@ class TailoredResumeStruct(BaseModel):
     interests: List[str] = Field(default_factory=list, description="Professional interests and hobbies")
     references: List[Dict[str, str]] = Field(default_factory=list, description="References with name, title, contact info")
     languages: List[Dict[str, str]] = Field(default_factory=list, description="Languages with name and proficiency level")
-    additional_sections: Dict[str, Any] = Field(default_factory=dict, description="Any other sections present in the original resume")
     tailored_resume_text: str = Field(default="", description="Full formatted resume text for fallback")
 
 
