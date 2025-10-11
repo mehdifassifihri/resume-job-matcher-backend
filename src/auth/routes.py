@@ -24,9 +24,11 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         raise
     except Exception as e:
         print(f"Unexpected error during registration: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error creating user"
+            detail=f"Error creating user: {str(e)}"
         )
 
 @router.post("/login", response_model=Token)
@@ -40,12 +42,15 @@ def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
         return tokens
     except HTTPException as e:
         print(f"HTTPException during login: {e.detail}")
-        raise
+        # Re-raise HTTPException as-is to preserve status code
+        raise e
     except Exception as e:
         print(f"Unexpected error during login: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error during login"
+            detail=f"Error during login: {str(e)}"
         )
 
 @router.post("/refresh", response_model=dict)

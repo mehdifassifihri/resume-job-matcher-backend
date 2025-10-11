@@ -113,7 +113,37 @@ API_PORT=8000
 
 ## 📖 Usage
 
-### API Usage
+### 🎨 Frontend Integration
+
+For frontend developers, we provide comprehensive documentation and tools:
+
+1. **[Authentication API Guide](docs/AUTH_API.md)** - Complete guide with request/response examples
+2. **[Quick Reference](docs/API_QUICK_REFERENCE.md)** - Quick lookup for common endpoints
+3. **[Postman Collection](postman_collection.json)** - Import and test all endpoints
+4. **Interactive Docs** - Visit `http://localhost:8000/docs` for live API testing
+
+#### Quick JavaScript Example
+
+```javascript
+// Login and get tokens
+const response = await fetch('http://localhost:8000/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    email: 'user@example.com',
+    password: 'password123'
+  })
+});
+
+const { access_token, refresh_token } = await response.json();
+
+// Use access_token for authenticated requests
+const userInfo = await fetch('http://localhost:8000/auth/me', {
+  headers: { 'Authorization': `Bearer ${access_token}` }
+});
+```
+
+### API Usage (Python)
 
 #### 1. User Registration
 
@@ -257,11 +287,15 @@ history = response.json()
 ## 📚 Complete Documentation Package
 
 ### 📖 **Included Documentation**
+- **[CV Analysis API](docs/CV_ANALYSIS_API.md)** - Complete CV analysis integration guide
+- **[Authentication API](docs/AUTH_API.md)** - Detailed authentication endpoints for frontend integration
+- **[Quick Reference](docs/API_QUICK_REFERENCE.md)** - Quick reference guide for common endpoints
 - **[API Documentation](docs/API.md)** - Complete API reference with examples
 - **[Installation Guide](docs/INSTALLATION.md)** - Step-by-step setup instructions
 - **[Features Overview](docs/FEATURES.md)** - Comprehensive feature documentation
 - **[Deployment Guide](docs/DEPLOYMENT.md)** - Production deployment strategies
 - **[FAQ](docs/FAQ.md)** - Frequently asked questions and troubleshooting
+- **[Postman Collection](postman_collection.json)** - Import directly into Postman/Insomnia for testing
 
 ### 🚀 **What You Get**
 - ✅ **Complete Source Code** - Fully documented and ready for customization

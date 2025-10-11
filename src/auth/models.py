@@ -8,7 +8,7 @@ from .database import Base
 class User(Base):
     """User model for authentication."""
     __tablename__ = "users"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String(255), unique=True, index=True, nullable=False)
     username = Column(String(100), unique=True, index=True, nullable=False)
@@ -22,14 +22,10 @@ class User(Base):
 class AnalysisHistory(Base):
     """Model for storing CV analysis history."""
     __tablename__ = "analysis_history"
-    
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, nullable=False, index=True)
-    tailored_resume = Column(Text, nullable=True)  # Store the tailored resume instead of original
+    tailored_resume = Column(Text, nullable=True)  # Tailored resume text
     job_text = Column(Text, nullable=True)
-    resume_file_path = Column(String(500), nullable=True)
-    job_file_path = Column(String(500), nullable=True)
-    model_used = Column(String(100), nullable=False)
     score = Column(Float, nullable=False)
     analysis_result = Column(Text, nullable=True)  # JSON string of the full result
     created_at = Column(DateTime(timezone=True), server_default=func.now())

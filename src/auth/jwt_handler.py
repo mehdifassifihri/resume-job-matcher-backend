@@ -8,8 +8,8 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import HTTPException, status
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Password hashing - use pbkdf2_sha256 as fallback if bcrypt fails
+pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
 
 # JWT Configuration
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-this-in-production")
@@ -19,11 +19,40 @@ REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        # Truncate password to 72 bytes to avoid bcrypt limitation
+        if len(plain_password.encode('utf-8')) > 72:
+            plain_password = plain_password[:72]
+        return pwd_context.verify(plain_password, hashed_password)
+    except Exception as e:
+        # Fallback to pbkdf2_sha256 if bcrypt fails
+        print(f"Primary verification failed, trying pbkdf2_sha256 fallback: {e}")
+        try:
+            fallback_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+            return fallback_context.verify(plain_password, hashed_password)
+        except Exception as fallback_error:
+            print(f"Fallback verification also failed: {fallback_error}")
+            # Try with just bcrypt if the hash looks like bcrypt
+            if hashed_password.startswith('$2b$') or hashed_password.startswith('$2a$'):
+                try:
+                    import bcrypt
+                    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+                except Exception as bcrypt_error:
+                    print(f"Direct bcrypt verification failed: {bcrypt_error}")
+            return False
 
 def get_password_hash(password: str) -> str:
     """Hash a password."""
-    return pwd_context.hash(password)
+    try:
+        # Truncate password to 72 bytes to avoid bcrypt limitation
+        if len(password.encode('utf-8')) > 72:
+            password = password[:72]
+        return pwd_context.hash(password)
+    except Exception as e:
+        # Fallback to pbkdf2_sha256 if bcrypt fails
+        print(f"Bcrypt failed, using pbkdf2_sha256: {e}")
+        fallback_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+        return fallback_context.hash(password)
 
 def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
     """Create a JWT access token."""

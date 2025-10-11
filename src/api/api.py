@@ -19,9 +19,10 @@ from ..auth.routes import router as auth_router
 from ..auth.history_routes import router as history_router
 from ..auth.dependencies import get_current_active_user
 from ..auth.init_db import create_tables
-from ..auth.models import User
+from ..auth.models import User, AnalysisHistory
 from sqlalchemy.orm import Session
 from ..auth.database import get_db
+import json
 
 # Configure logging
 logging.basicConfig(
@@ -76,10 +77,15 @@ async def general_exception_handler(request: Request, exc: Exception):
 async def match_upload(
     resume_file: UploadFile = File(..., description="Resume file (PDF, DOCX, or TXT)"),
     job_description: str = Form(..., description="Job description text"),
-    model: str = Form(default="gpt-4o-mini", description="OpenAI model to use")
+    model: str = Form(default="gpt-4o-mini", description="OpenAI model to use"),
+    user_id: Optional[int] = Form(None, description="User ID (optional, for saving to history)"),
+    db: Session = Depends(get_db)
 ):
-    """Run the matching pipeline with uploaded resume file and job description text."""
-    logger.info(f"File upload request received - Resume: {resume_file.filename}, Model: {model}")
+    """
+    Run the matching pipeline with uploaded resume file and job description text.
+    If user_id is provided, the analysis will be saved to the user's history.
+    """
+    logger.info(f"File upload request received - Resume: {resume_file.filename}, Model: {model}, User ID: {user_id}")
     
     resume_path = None
     
@@ -118,6 +124,26 @@ async def match_upload(
         logger.info("Starting file processing")
         result = run_pipeline(None, job_description, resume_path, None, model, include_ats_validation=True)
         logger.info(f"File processing completed successfully - Score: {result.score}")
+        
+        # Save to history if user_id is provided
+        if user_id:
+            try:
+                logger.info(f"Saving analysis to history for user_id: {user_id}")
+                analysis_history = AnalysisHistory(
+                    user_id=user_id,
+                    tailored_resume=result.tailored_resume_text,
+                    job_text=job_description,
+                    score=result.score,
+                    analysis_result=json.dumps(result.model_dump())
+                )
+                db.add(analysis_history)
+                db.commit()
+                db.refresh(analysis_history)
+                logger.info(f"Analysis saved to history with ID: {analysis_history.id}")
+            except Exception as e:
+                logger.error(f"Failed to save analysis to history: {str(e)}")
+                # Don't fail the request if history save fails
+                db.rollback()
         
         return result
         

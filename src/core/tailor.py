@@ -50,11 +50,12 @@ INSTRUCTIONS:
 3. TAILORED TEXT: Create formatted resume text with all original sections
 4. KEYWORDS: Naturally incorporate job description keywords
 5. RECOMMENDATIONS: Suggest 3-5 actionable improvements
-6. SKILLS SECTION:
+6. LANGUAGE: Generate the entire resume in ENGLISH, regardless of the original resume's language. Translate all content while preserving the original meaning and context.
+7. SKILLS SECTION:
    - Include all matched skills from the analysis
    - ADD all missing skills from job requirements into the appropriate skill categories
    - Ensure missing skills appear in the tailored resume even if absent in the original resume
-7. MAINTAIN COHERENCE: Do not invent unrelated facts; integrate missing skills seamlessly into the candidate’s profile
+8. MAINTAIN COHERENCE: Do not invent unrelated facts; integrate missing skills seamlessly into the candidate's profile
 
 SKILLS CATEGORIES:
 - "programming_languages": Programming languages (Python, Java, C++, JavaScript, SQL, etc.)
@@ -64,6 +65,18 @@ SKILLS CATEGORIES:
 - "cloud_platforms": Cloud services (AWS, Azure, GCP, etc.)
 - "methodologies": Development methodologies (Agile, Scrum, CI/CD, etc.)
 - "other": Other technical skills (API Development, Microservices, etc.)
+
+PROJECTS SECTION:
+- Include ALL projects from the original resume if they exist
+- For each project, extract and include:
+  * Project name/title
+  * Brief description of what the project does
+  * Technologies, tools, and frameworks used
+  * Key achievements or outcomes (if mentioned)
+  * Duration or timeline (if available)
+- Focus on projects that are most relevant to the job requirements
+- If no projects exist in the original resume, leave the projects array empty
+- Ensure project technologies align with the job requirements when possible
 
 Return ONLY the JSON object, no additional text.
 """).partial(format_instructions=Tail_parser.get_format_instructions())

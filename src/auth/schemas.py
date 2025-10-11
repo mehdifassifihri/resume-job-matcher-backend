@@ -43,9 +43,8 @@ class TokenRefresh(BaseModel):
 class AnalysisHistoryResponse(BaseModel):
     """Schema for analysis history response."""
     id: int
-    tailored_resume: Optional[str]  # Store the tailored resume instead of original
+    tailored_resume: Optional[str]  # Tailored resume text
     job_text: Optional[str]
-    model_used: str
     score: float
     created_at: datetime
     
