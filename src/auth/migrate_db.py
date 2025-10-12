@@ -2,9 +2,12 @@
 Database migration script to update AnalysisHistory table.
 This script renames resume_text column to tailored_resume.
 """
+import logging
 from sqlalchemy import create_engine, text
 from .database import DATABASE_URL
 import os
+
+logger = logging.getLogger(__name__)
 
 def migrate_database():
     """Migrate the database to rename resume_text to tailored_resume."""
@@ -20,7 +23,7 @@ def migrate_database():
             """))
             
             if result.fetchone()[0] > 0:
-                print("🔄 Migrating database: renaming resume_text to tailored_resume...")
+                logger.info("🔄 Migrating database: renaming resume_text to tailored_resume...")
                 
                 # Rename the column
                 conn.execute(text("""
@@ -29,13 +32,14 @@ def migrate_database():
                 """))
                 
                 conn.commit()
-                print("✅ Database migration completed successfully!")
+                logger.info("✅ Database migration completed successfully!")
             else:
-                print("ℹ️  No migration needed - tailored_resume column already exists")
+                logger.info("ℹ️  No migration needed - tailored_resume column already exists")
                 
     except Exception as e:
-        print(f"❌ Migration failed: {e}")
-        print("💡 You may need to recreate the database if this is a development environment")
+        logger.error(f"❌ Migration failed: {e}", exc_info=True)
+        logger.info("💡 You may need to recreate the database if this is a development environment")
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
     migrate_database()

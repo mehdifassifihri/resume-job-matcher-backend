@@ -2,11 +2,14 @@
 JWT token handling utilities.
 """
 import os
+import logging
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import HTTPException, status
+
+logger = logging.getLogger(__name__)
 
 # Password hashing - use pbkdf2_sha256 as fallback if bcrypt fails
 pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
@@ -26,19 +29,19 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         return pwd_context.verify(plain_password, hashed_password)
     except Exception as e:
         # Fallback to pbkdf2_sha256 if bcrypt fails
-        print(f"Primary verification failed, trying pbkdf2_sha256 fallback: {e}")
+        logger.warning(f"Primary verification failed, trying pbkdf2_sha256 fallback: {e}")
         try:
             fallback_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
             return fallback_context.verify(plain_password, hashed_password)
         except Exception as fallback_error:
-            print(f"Fallback verification also failed: {fallback_error}")
+            logger.warning(f"Fallback verification also failed: {fallback_error}")
             # Try with just bcrypt if the hash looks like bcrypt
             if hashed_password.startswith('$2b$') or hashed_password.startswith('$2a$'):
                 try:
                     import bcrypt
                     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
                 except Exception as bcrypt_error:
-                    print(f"Direct bcrypt verification failed: {bcrypt_error}")
+                    logger.error(f"Direct bcrypt verification failed: {bcrypt_error}")
             return False
 
 def get_password_hash(password: str) -> str:
@@ -50,7 +53,7 @@ def get_password_hash(password: str) -> str:
         return pwd_context.hash(password)
     except Exception as e:
         # Fallback to pbkdf2_sha256 if bcrypt fails
-        print(f"Bcrypt failed, using pbkdf2_sha256: {e}")
+        logger.warning(f"Bcrypt failed, using pbkdf2_sha256: {e}")
         fallback_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
         return fallback_context.hash(password)
 

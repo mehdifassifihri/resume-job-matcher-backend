@@ -1,6 +1,7 @@
 """
 Routes for analysis history by user ID.
 """
+import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
@@ -9,6 +10,7 @@ from .schemas import AnalysisHistoryResponse
 from .dependencies import get_current_active_user
 from .models import User, AnalysisHistory
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/history", tags=["history"])
 
 @router.get("/analyses/{user_id}", response_model=List[AnalysisHistoryResponse])
@@ -19,18 +21,16 @@ def get_all_analysis_by_user_id(
 ):
     """Get all analysis history by user ID."""
     try:
-        print(f"Fetching analysis history for user_id: {user_id}")
+        logger.info(f"Fetching analysis history for user_id: {user_id}")
         analyses = db.query(AnalysisHistory)\
             .filter(AnalysisHistory.user_id == user_id)\
             .order_by(AnalysisHistory.created_at.desc())\
             .all()
         
-        print(f"Found {len(analyses)} analyses")
+        logger.info(f"Found {len(analyses)} analyses")
         return analyses
     except Exception as e:
-        print(f"Error fetching analysis history: {str(e)}")
-        import traceback
-        traceback.print_exc()
+        logger.error(f"Error fetching analysis history: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error fetching analysis history: {str(e)}"

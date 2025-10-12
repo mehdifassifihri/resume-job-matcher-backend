@@ -5,7 +5,10 @@ and adds 'tailored_resume' column.
 """
 import sqlite3
 import os
+import logging
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 def migrate_database():
     """Migrate the database schema."""
@@ -13,10 +16,10 @@ def migrate_database():
     db_path = Path(__file__).parent.parent.parent / "resume_matcher.db"
     
     if not db_path.exists():
-        print("Database file not found. Creating new database with updated schema.")
+        logger.info("Database file not found. Creating new database with updated schema.")
         return
     
-    print(f"Migrating database at: {db_path}")
+    logger.info(f"Migrating database at: {db_path}")
     
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -29,7 +32,7 @@ def migrate_database():
         """)
         
         if not cursor.fetchone():
-            print("Table 'analysis_history' does not exist. No migration needed.")
+            logger.info("Table 'analysis_history' does not exist. No migration needed.")
             conn.close()
             return
         
@@ -38,10 +41,10 @@ def migrate_database():
         columns = cursor.fetchall()
         column_names = [col[1] for col in columns]
         
-        print(f"Current columns: {column_names}")
+        logger.info(f"Current columns: {column_names}")
         
         # Create new table with updated schema
-        print("Creating new table with updated schema...")
+        logger.info("Creating new table with updated schema...")
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS analysis_history_new (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,7 +64,7 @@ def migrate_database():
         """)
         
         # Copy data from old table to new table
-        print("Migrating data...")
+        logger.info("Migrating data...")
         
         # Check if tailored_resume column exists in old table
         if 'tailored_resume' in column_names:
@@ -90,35 +93,36 @@ def migrate_database():
             """)
         
         rows_migrated = cursor.rowcount
-        print(f"Migrated {rows_migrated} rows")
+        logger.info(f"Migrated {rows_migrated} rows")
         
         # Drop old table
-        print("Dropping old table...")
+        logger.info("Dropping old table...")
         cursor.execute("DROP TABLE analysis_history")
         
         # Rename new table to old table name
-        print("Renaming new table...")
+        logger.info("Renaming new table...")
         cursor.execute("ALTER TABLE analysis_history_new RENAME TO analysis_history")
         
         # Commit changes
         conn.commit()
-        print("✅ Migration completed successfully!")
+        logger.info("✅ Migration completed successfully!")
         
     except Exception as e:
         conn.rollback()
-        print(f"❌ Migration failed: {str(e)}")
+        logger.error(f"❌ Migration failed: {str(e)}", exc_info=True)
         raise
     finally:
         conn.close()
 
 if __name__ == "__main__":
-    print("="*60)
-    print("  AnalysisHistory Table Migration")
-    print("="*60)
-    print("\nThis script will update the database schema:")
-    print("  - Remove: structured_resume, resume_file_path, job_file_path, model_used")
-    print("  - Add: tailored_resume")
-    print("\n" + "="*60 + "\n")
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logger.info("="*60)
+    logger.info("  AnalysisHistory Table Migration")
+    logger.info("="*60)
+    logger.info("\nThis script will update the database schema:")
+    logger.info("  - Remove: structured_resume, resume_file_path, job_file_path, model_used")
+    logger.info("  - Add: tailored_resume")
+    logger.info("\n" + "="*60 + "\n")
     
     migrate_database()
 

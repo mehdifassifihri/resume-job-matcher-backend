@@ -1,0 +1,148 @@
+AI RESUME & JOB MATCHER - CHANGELOG
+====================================
+
+All notable changes to this project will be documented in this file.
+
+===============================================================================
+Version 1.0.0 - Initial Release (October 2024)
+===============================================================================
+
+FEATURES:
+---------
+
+Core AI Features:
+  ✓ Advanced resume-job matching with GPT-4 powered analysis
+  ✓ Smart compatibility scoring (0-100 scale)
+  ✓ AI resume optimization and tailoring for specific jobs
+  ✓ Multi-format support (PDF, DOCX, TXT)
+  ✓ Automatic language detection (English, French)
+
+Authentication & Security:
+  ✓ JWT-based authentication system
+  ✓ User registration and login
+  ✓ Secure password hashing with bcrypt
+  ✓ Token refresh mechanism
+  ✓ Protected API endpoints
+
+Analysis & History:
+  ✓ Complete analysis history tracking
+  ✓ User-specific history isolation
+  ✓ Paginated history retrieval
+  ✓ Detailed analysis results storage
+  ✓ Payment history management
+
+API Features:
+  ✓ RESTful API design
+  ✓ Comprehensive Swagger/OpenAPI documentation
+  ✓ File upload handling
+  ✓ CORS support
+  ✓ Error handling and validation
+
+Technical Features:
+  ✓ Skill matching with variants and aliases
+  ✓ Education validation to prevent AI hallucination
+  ✓ ATS (Applicant Tracking System) validation
+  ✓ Safety checks for content accuracy
+  ✓ Automatic file cleanup
+
+DOCUMENTATION:
+--------------
+  ✓ Complete README with setup instructions
+  ✓ API documentation (8 detailed guides)
+  ✓ Authentication API guide
+  ✓ CV Analysis API guide
+  ✓ Quick reference guide
+  ✓ Deployment guides
+  ✓ FAQ and troubleshooting
+  ✓ Postman collection included
+
+DEPLOYMENT:
+-----------
+  ✓ Docker support
+  ✓ Railway deployment ready
+  ✓ Heroku compatible
+  ✓ Production-ready configuration
+  ✓ Environment variable configuration
+
+SUPPORTED MODELS:
+-----------------
+  ✓ gpt-4o-mini (default, recommended)
+  ✓ gpt-4o
+  ✓ gpt-4-turbo
+  ✓ gpt-3.5-turbo
+
+DEPENDENCIES:
+-------------
+  - FastAPI 0.104.1
+  - LangChain 0.0.350
+  - OpenAI >= 1.6.1
+  - SQLAlchemy >= 2.0.36
+  - Python 3.8+ (Python 3.11+ recommended)
+
+KNOWN LIMITATIONS:
+------------------
+  - Requires OpenAI API key (separate subscription)
+  - Processing time: 8-20 seconds per analysis
+  - Maximum file size: 10MB
+  - Supported file formats: PDF, DOCX, TXT only
+
+===============================================================================
+FUTURE ROADMAP (Planned Features)
+===============================================================================
+
+Version 1.1.0 (Planned):
+  - Bulk processing capabilities
+  - Advanced analytics dashboard
+  - Export to multiple formats (PDF, Word)
+  - Enhanced ATS validation
+  - Performance optimizations
+
+Version 1.2.0 (Planned):
+  - Webhook support for real-time notifications
+  - Additional language support
+  - Custom skill taxonomy
+  - Advanced reporting features
+
+Version 2.0.0 (Future):
+  - Machine learning model fine-tuning
+  - Industry-specific matching models
+  - Team collaboration features
+  - Advanced permission management
+
+===============================================================================
+SUPPORT & UPDATES
+===============================================================================
+
+This package includes:
+  ✓ 6 months of support
+  ✓ Bug fixes and security updates
+  ✓ Minor feature updates
+  ✓ Documentation updates
+
+For support:
+  - Visit your CodeCanyon purchase page
+  - Use the support tab
+  - Check documentation first for common issues
+
+===============================================================================
+CREDITS
+===============================================================================
+
+Technologies Used:
+  - FastAPI (https://fastapi.tiangolo.com)
+  - OpenAI GPT Models (https://openai.com)
+  - LangChain (https://langchain.com)
+  - SQLAlchemy (https://www.sqlalchemy.org)
+
+Special Thanks:
+  - OpenAI for their powerful language models
+  - FastAPI team for the excellent framework
+  - The Python community
+
+===============================================================================
+
+Thank you for purchasing AI Resume & Job Matcher!
+For questions or support, please use the CodeCanyon support system.
+
+===============================================================================
+

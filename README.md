@@ -102,6 +102,56 @@ API_HOST=0.0.0.0
 API_PORT=8000
 ```
 
+## 💰 OpenAI API Costs & Requirements
+
+⚠️ **IMPORTANT**: This system requires an **OpenAI API key** which is **NOT included** with your purchase.
+
+### Getting Your OpenAI API Key
+
+1. Visit [OpenAI Platform](https://platform.openai.com)
+2. Create an account or sign in
+3. Navigate to **API Keys** section
+4. Create a new API key
+5. Add credits to your account (minimum $5 recommended)
+
+### Estimated Costs Per Analysis
+
+| Model | Cost per Analysis | Speed | Quality | Recommended For |
+|-------|------------------|-------|---------|-----------------|
+| `gpt-4o-mini` | **$0.02 - $0.05** | ⚡ Fast | ⭐⭐⭐⭐ | **Default/Production** |
+| `gpt-4o` | $0.10 - $0.20 | Medium | ⭐⭐⭐⭐⭐ | Premium Quality |
+| `gpt-4-turbo` | $0.08 - $0.15 | Medium | ⭐⭐⭐⭐⭐ | Balanced Option |
+| `gpt-3.5-turbo` | $0.01 - $0.02 | ⚡⚡ Very Fast | ⭐⭐⭐ | Budget Option |
+
+### Monthly Cost Estimates
+
+- **Low Volume** (50 analyses/month): ~$2.50/month with gpt-4o-mini
+- **Medium Volume** (500 analyses/month): ~$25/month with gpt-4o-mini
+- **High Volume** (2000 analyses/month): ~$100/month with gpt-4o-mini
+
+### Cost Optimization Tips
+
+1. **Use gpt-4o-mini** for production (default setting)
+2. **Batch Processing**: Process multiple resumes together when possible
+3. **Caching**: Implement caching for repeated job descriptions
+4. **Usage Limits**: Set OpenAI usage limits in your account
+5. **Monitoring**: Track your OpenAI usage through their dashboard
+
+### What's NOT Included
+
+❌ OpenAI API credits  
+❌ OpenAI subscription  
+❌ Infrastructure/hosting costs  
+❌ Domain names or SSL certificates
+
+### What IS Included
+
+✅ Complete source code  
+✅ All documentation  
+✅ Setup scripts  
+✅ 6 months of support  
+✅ Free updates for 6 months
+
 ### 🤖 Supported AI Models
 
 | Model | Use Case | Cost | Quality | Speed |

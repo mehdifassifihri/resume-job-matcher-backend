@@ -54,3 +54,19 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+
+# Test files (keep these out of production package)
+test_*.py
+*_test.py
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Uploaded files
+uploads/
+temp_uploads/
+
+# CodeCanyon package
+codecanyon_package/
+*.zip

@@ -2,10 +2,13 @@
 Configuration and constants for the resume-job matcher application.
 """
 import os
+import logging
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 # API Configuration
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -22,12 +25,12 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./resume_matcher.db")
 
 # Validation
 if not OPENAI_API_KEY:
-    print("⚠️  WARNING: OPENAI_API_KEY environment variable is not set!")
-    print("Please set your OpenAI API key:")
-    print("export OPENAI_API_KEY='your-api-key-here'")
-    print("Or create a .env file with: OPENAI_API_KEY=your-api-key-here")
+    logger.warning("OPENAI_API_KEY environment variable is not set!")
+    logger.warning("Please set your OpenAI API key:")
+    logger.warning("export OPENAI_API_KEY='your-api-key-here'")
+    logger.warning("Or create a .env file with: OPENAI_API_KEY=your-api-key-here")
 else:
-    print("✅ OPENAI_API_KEY is configured")
+    logger.info("OPENAI_API_KEY is configured")
 
 # Normalization aliases for different categories
 ALIASES = {

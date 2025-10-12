@@ -1,0 +1,142 @@
+COMMERCIAL LICENSE AGREEMENT
+=============================
+
+AI Resume & Job Matcher - Premium Commercial Product
+Copyright © 2024. All rights reserved.
+
+This software is available for purchase on CodeCanyon (Envato Market).
+
+-------------------------------------------------------------------------------
+GRANT OF LICENSE
+-------------------------------------------------------------------------------
+
+This license grants the purchaser the following rights:
+
+1. SINGLE USE LICENSE
+   - Use the software in ONE end product (website, application, or service)
+   - The end product may be used by you or your client
+   - The end product can be distributed/sold to end users
+
+2. COMMERCIAL USE
+   - Use in commercial applications and services
+   - Generate revenue from the end product
+   - Use for client projects (single project per license)
+
+3. MODIFICATION RIGHTS
+   - Modify and customize the source code for your specific use
+   - Integrate with other software and services
+   - Extend functionality as needed for your project
+
+4. SUPPORT & UPDATES
+   - 6 months of support from the developer
+   - Access to bug fixes and updates for 6 months
+   - Support renewal available through CodeCanyon
+
+-------------------------------------------------------------------------------
+RESTRICTIONS
+-------------------------------------------------------------------------------
+
+You MAY NOT:
+
+1. REDISTRIBUTION
+   - Redistribute or share the source code
+   - Make the source code available to any third party
+   - Share your purchase with others
+
+2. RESALE
+   - Resell the software as a standalone product
+   - Sell or distribute the software in any template or theme marketplace
+   - Create competing products using this codebase
+
+3. MULTIPLE USE
+   - Use a single license for multiple end products
+   - Use in more than one project (requires additional license)
+
+4. SUBLICENSING
+   - Sublicense, rent, or lease the software
+   - Transfer license rights to another party without authorization
+
+-------------------------------------------------------------------------------
+THIRD-PARTY SERVICES
+-------------------------------------------------------------------------------
+
+IMPORTANT: This software requires third-party services that may incur costs:
+
+1. OPENAI API (REQUIRED)
+   - You must obtain your own OpenAI API key
+   - OpenAI charges separately for API usage
+   - Estimated cost: $0.02-$0.20 per analysis depending on model
+   - Visit: https://platform.openai.com
+
+The license for this software does NOT include:
+- OpenAI API credits or subscription
+- Third-party service fees
+- Infrastructure/hosting costs
+
+-------------------------------------------------------------------------------
+WARRANTY DISCLAIMER
+-------------------------------------------------------------------------------
+
+THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+SUPPORT
+-------------------------------------------------------------------------------
+
+Support is provided through:
+- CodeCanyon comment section
+- Support ticket system (if available)
+- Documentation included with purchase
+
+Support includes:
+- Installation assistance
+- Bug fixes
+- Configuration help
+- General usage questions
+
+Support does NOT include:
+- Custom feature development
+- Code customization services
+- Integration with third-party systems (beyond documentation)
+
+-------------------------------------------------------------------------------
+REFUND POLICY
+-------------------------------------------------------------------------------
+
+Refunds are subject to CodeCanyon's refund policy.
+Please ensure the software meets your requirements before purchasing.
+
+-------------------------------------------------------------------------------
+CONTACT
+-------------------------------------------------------------------------------
+
+For licensing questions or support:
+- Through your CodeCanyon account
+- Via the item support tab on CodeCanyon
+
+For custom licensing or enterprise inquiries:
+- Contact through CodeCanyon messaging system
+
+-------------------------------------------------------------------------------
+AGREEMENT
+-------------------------------------------------------------------------------
+
+By purchasing and using this software, you agree to be bound by the terms
+of this license agreement.
+
+This license is effective until terminated. Your rights under this license
+will terminate automatically without notice if you fail to comply with any
+term of this agreement.
+
+===============================================================================
+Last Updated: October 2024
+License Version: 1.0
+===============================================================================
+
